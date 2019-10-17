@@ -4,33 +4,33 @@ close all;
 
 %% Inputs
 
-% Mission Profile
-
+% % Mission Profile
+% 
 numPass = 2; % number of passengers (including pilot)
 avgW = 200; % average weight of person [lbs]
 payload = avgW * numPass; % total payload weight [lbs]
-
-payload = 200 ; % [lbs]
-% dist = 25*1609; % distance [m] (25 miles)
-cruiseSpeed = 80 * .5144; % [m/s] 100 knots
+% 
+% payload = 200 ; % [lbs]
+dist = 25*1609; % distance [m] (25 miles)
+cruiseSpeed = 100 * .5144; % [m/s] 100 knots
 Vfwd = cruiseSpeed; % forward velocity [m/s]
-% cruiseTime = dist/Vfwd; % cruise time[s]
-cruiseTime = 30*60; % seconds
-dist = cruiseSpeed * cruiseTime;
-
-Vmaxfwd = 120 * .5144; % maximum forward velocity [m/s]
-altitude = 0; % altitude [ft]
-
+cruiseTime = dist/Vfwd; % cruise time[s]
+% cruiseTime = 30*60;
+% dist = cruiseSpeed * cruiseTime;
+% 
+Vmaxfwd = 100 * .5144; % maximum forward velocity [m/s]
+altitude = 1000; % altitude [ft]
+% 
 h = 10 * 0.3048; % hover height [m]
-hoverTime = 40; % [s]
-
+hoverTime = 240 ; % [s]
+ 
 climbDist = altitude * 0.3048 - h; % vertical climb/landing distance [m]
 rateClimb = 2.54; % rate of climb [m/s] (500 fpm)
 climbTime = climbDist/rateClimb; % climbing time [s]
-
+% 
 reserve = 20 * 60; % reserve requirement [s] (20 min) (FAA requirements)
-
-Ed = 140.6; % Energy Density [W*h/kg] (Kokam LiPo battery energy density - used in Freidrich and Robertson 2015)
+% 
+% Ed = 140.6; % Energy Density [W*h/kg] (Kokam LiPo battery energy density - used in Freidrich and Robertson 2015)
 
 %% Data Loading
 % Atmospheric Data for Interpolation based on Altitude
@@ -55,48 +55,48 @@ flatPlateAreaData = flatPlateData(:,2); % equivalent flat plate area [ft^2]
 
 %% Analysis
 
-% energies = [];
-% weights = [];
-% radii = [];
-% hoverpowers = [];
-% 
-% Ed_sweep = [144 250 400];
+energies = [];
+weights = [];
+radii = [];
+hoverpowers = [];
+
+Ed_sweep = [144 250 400];
 % pass_sweep = [2 4 6 8];
-% 
-% for j = 1:length(Ed_sweep)
-%     Ed = Ed_sweep(j);
-% 
-%    % numPass = pass_sweep(j);
-%     %payload = avgW * numPass;
-%     
-%     if Ed == 144
-% %         passengers = 1:10;
-%         %         speeds = [60:120]*.5144;
-%         % distances = [5:37]*1609;
+
+for j = 1:length(Ed_sweep)
+    Ed = Ed_sweep(j);
+
+    %numPass = pass_sweep(j);
+    %payload = avgW * numPass;
+    
+    if Ed == 144
+         %passengers = 1:10;
+                 %speeds = [60:120]*.5144;
+        distances = [5:37]*1609;
 %         hovers = 10:10:520;
-%     elseif Ed == 250
-% %         passengers = 1:10;
-%         %         speeds = [35:120]*.5144;
-%         % distances = [5:104]*1609; 
+    elseif Ed == 250
+        %passengers = 1:10;
+                %speeds = [35:120]*.5144;
+        distances = [5:104]*1609; 
 %         hovers = 10:10:2000;
-%     elseif Ed ==400
-% %         passengers = 2:10;
-%         %         speeds = [25:120]*.5144;
-%         % distances = [5:199]*1609;
+    elseif Ed ==400
+        %passengers = 2:10;
+                %speeds = [25:120]*.5144;
+        distances = [5:199]*1609;
 %         hovers = 10:10:4140;
-%     end
-%     
-%     for i = 1:length(hovers)
+    end
+    
+    for i = 1:length(distances)
         
-%         numPass = passengers(i);
-%         payload = avgW * numPass;
+        %numPass = passengers(i);
+        %payload = avgW * numPass;
         
 %         cruiseSpeed = speeds(i);
 %         Vfwd = cruiseSpeed;
 %         cruiseTime = dist/Vfwd;
 %         
-        % dist = distances(i);
-        % cruiseTime = dist/Vfwd;
+        dist = distances(i);
+        cruiseTime = dist/Vfwd;
 %         
 %         hoverTime = hovers(i);
         
@@ -121,6 +121,7 @@ flatPlateAreaData = flatPlateData(:,2); % equivalent flat plate area [ft^2]
         
         % Determine number of main rotor blades
         numBlades = 2; % number of blades (assumption - typical for lighter weight helicopters - Leishman)
+%         numBlades = 4; % run with 4 blades instead of 2
         
         % Estimate Reynolds number
         R_init = (0.0011 * (Wg_init * 0.2247) + 11.496) * 0.3048; % rotor radius [m] (relation determined from data in Leishman)
@@ -439,7 +440,7 @@ flatPlateAreaData = flatPlateData(:,2); % equivalent flat plate area [ft^2]
             % Attempt 2
             %     We_new = ((W_mainrotor + W_tailrotor + W_flightcontrol + W_landinggear + W_fuselage) * 4.45 + W_battery + W_propulsion); % [N]
             % Attempt 3
-            We_new =  x * (W_blades + W_hub + W_tailrotor + W_fuselage + W_HT + W_VT + W_landinggear +  W_gearbox + W_rotorshaft + W_driveshaft + W_rotorbrakes + W_controls) * 4.45 + 1.125*(W_battery + W_propulsion); % [N]
+            We_new =  x * (W_blades + W_hub + W_tailrotor + W_fuselage + W_HT + W_VT + W_landinggear +  W_gearbox + W_rotorshaft + W_driveshaft + W_rotorbrakes + W_controls) * 4.45 + 1.1*(W_battery + W_propulsion); % [N]
             
             Wg_new = We_new + (payload * 4.45); % new estimate of gross weight [N]
             
@@ -604,13 +605,13 @@ flatPlateAreaData = flatPlateData(:,2); % equivalent flat plate area [ft^2]
             
         end
 
-%         energies(i,j) = Ec_tot/1000;
-%         weights(i,j) = Wg_new * 0.2247;
-%         radii(i,j) = R*3.28;
-%         hoverpowers(i,j) = Ptotal_hover/1000;
-        
-%     end
-% end
+        energies(i,j) = Ec_tot/1000;
+        weights(i,j) = Wg_new * 0.2247;
+        radii(i,j) = R*3.28;
+        hoverpowers(i,j) = Ptotal_hover/1000;
+%         
+     end
+ end
 
 
 
@@ -654,10 +655,11 @@ RPM = Omega * 9.549
 % set(gcf,'color','w');
 % xlabel('Number of Passengers', 'FontSize', 17, 'FontWeight', 'bold')
 % ylabel('Total Energy (kWh)', 'FontSize', 17, 'FontWeight', 'bold')
+% ylim([0 250])
 % set(gca, 'linewidth', 2, 'FontSize', 15)
 % 
-% 
-% 
+% % 
+% % 
 % grossweights = [1000 2000 3000 4000 5000];
 % for k = 1:length(grossweights)
 %     findWeight = grossweights(k);
@@ -701,43 +703,45 @@ RPM = Omega * 9.549
 
 
 % % DISTANCE
-% figure(3)
-% dist1 = 5:37;
-% dist2 = 5:104;
-% dist3 = 5:199;
-% plot(dist1, energies(1:length(dist1), 1), ':k', 'LineWidth', 2)
-% hold on
-% plot(dist2, energies(1:length(dist2), 2), '--k', 'LineWidth', 2)
-% hold on
-% plot(dist3, energies(1:length(dist3), 3), 'k', 'LineWidth', 2)
-% box off
-% set(gcf,'color','w');
-% xlabel('Distance (miles)')
-% ylabel('Total Energy (kWh)')
-%
+figure(3)
+dist1 = 5:37;
+dist2 = 5:104;
+dist3 = 5:199;
+
+
+plot(dist1, energies(1:length(dist1), 1), ':k', 'LineWidth', 2)
+hold on
+plot(dist2, energies(1:length(dist2), 2), '--k', 'LineWidth', 2)
+hold on
+plot(dist3, energies(1:length(dist3), 3), 'k', 'LineWidth', 2)
+box off
+set(gcf,'color','w');
+xlabel('Distance (miles)')
+ylabel('Total Energy (kWh)')
+
 % grossweights = [2000 3000 4000 5000];
 % for k = 1:length(grossweights)
 %     findWeight = grossweights(k);
 %     numAtWeight = interp1(weights(1:length(dist1)), dist1, findWeight);
 %     energyAtNum = interp1(dist1, energies(1:length(dist1)), numAtWeight);
-%
+% 
 %     numAtWeight2 = interp1(weights(1:length(dist2),2), dist2, findWeight);
 %     energyAtNum2 = interp1(dist2, energies(1:length(dist2),2), numAtWeight2);
-%
+% 
 %     numAtWeight3 = interp1(weights(1:length(dist3),3), dist3, findWeight);
 %     energyAtNum3 = interp1(dist3, energies(1:length(dist3),3), numAtWeight3);
-%
+% 
 %     numbers = [numAtWeight numAtWeight2 numAtWeight3];
 %     energies2 = [energyAtNum energyAtNum2 energyAtNum3];
-%
+% 
 %     hold on
 %     plot(numbers, energies2, 'k')
 %     text(numbers(3)+3, energies2(3)-5, strcat(num2str(findWeight), ' lbs'));
-%
+% 
 % end
-%
-% leg = legend('144 Wh/kg', '250 Wh/kg', '400 Wh/kg', 'Location', 'NW');
-% title(leg, 'Battery Energy Density')
+
+leg = legend('144 Wh/kg', '250 Wh/kg', '400 Wh/kg', 'Location', 'NW');
+title(leg, 'Battery Energy Density')
 
 
 
@@ -757,7 +761,7 @@ RPM = Omega * 9.549
 % xlabel('Hover Time (sec)', 'FontSize', 17, 'FontWeight', 'bold')
 % ylabel('Total Energy (kWh)', 'FontSize', 17, 'FontWeight', 'bold')
 % set(gca, 'linewidth', 2, 'FontSize', 15)
-
+% 
 % grossweights = [2000 3000 4000 5000];
 % for k = 1:length(grossweights)
 %     findWeight = grossweights(k);
