@@ -65,18 +65,18 @@ for j = 1:length(Ed_sweep)
     if Ed == 144
 %        passengers = 1:10;
 %        speeds = [25:120]*.5144;
-        distances = [5:2000]*1609;
+        distances = [5:58]*1609;
 %        hovers = 10:10:1010;
     elseif Ed == 250
 %        passengers = 1:10;
 %        speeds = [25:120]*.5144;
         
-        distances = [5:2000]*1609;
+        distances = [5:141]*1609;
 %        hovers = 10:10:2110;
     elseif Ed ==400
 %        passengers = 1:10;
 %        speeds = [25:120]*.5144;
-        distances = [5:2000]*1609;
+        distances = [5:257]*1609;
 %        hovers = 10:10:3700;
     end
     
@@ -157,7 +157,8 @@ for j = 1:length(Ed_sweep)
         We = We_init; % initialize empty weight [N]
         P_hover = 0; % initialize power [W]
         
-        Ec = 20000; % initial guess for energy capacity [W*hr]
+%         Ec = 20000; % initial guess for energy capacity [W*hr]
+
         
         Mbatt = 100; %kg 
         Ec = Ed * Mbatt; % initial guess for energy capacity [W*hr]
@@ -200,7 +201,7 @@ for j = 1:length(Ed_sweep)
                 
                 while cond2 == 1
                     innerLoop_counter = innerLoop_counter + 1;
-                    
+                    Ec = Ed * Mbatt; % initial guess for energy capacity [W*hr]
                     % If figure of merit is not in the right range, use updated value
                     % of rotational velocity instead
                     if FM == 1
@@ -779,9 +780,9 @@ RPM = Omega * 9.549
 
 % DISTANCE
 figure(3)
-dist1 = 5:2000;
-dist2 = 5:2000;
-dist3 = 5:2000;
+dist1 = 5:58;
+dist2 = 5:141;
+dist3 = 5:257;
 plot(dist1, energies(1:length(dist1), 1), ':k', 'LineWidth', 2)
 hold on
 plot(dist2, energies(1:length(dist2), 2), '--k', 'LineWidth', 2)
