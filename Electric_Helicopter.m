@@ -573,7 +573,8 @@ for j = 1:length(Ed_sweep)
                                bm = bm_pw;
                            else 
                                bm = bm_Ed;
-                           end 
+                           end
+                           bm_ratio(i,j) = bm_Ed/bm_pw;
          
                % If energy capacity used in battery weight calculations has
 
@@ -719,30 +720,43 @@ set(gcf,'color','w');
 xlabel('Distance (miles)')
 ylabel('Total Energy (kWh)')
 
-% grossweights = [2000 3000 4000 5000];
-% for k = 1:length(grossweights)
-%     findWeight = grossweights(k);
-%     numAtWeight = interp1(weights(1:length(dist1)), dist1, findWeight);
-%     energyAtNum = interp1(dist1, energies(1:length(dist1)), numAtWeight);
-% 
-%     numAtWeight2 = interp1(weights(1:length(dist2),2), dist2, findWeight);
-%     energyAtNum2 = interp1(dist2, energies(1:length(dist2),2), numAtWeight2);
-% 
-%     numAtWeight3 = interp1(weights(1:length(dist3),3), dist3, findWeight);
-%     energyAtNum3 = interp1(dist3, energies(1:length(dist3),3), numAtWeight3);
-% 
-%     numbers = [numAtWeight numAtWeight2 numAtWeight3];
-%     energies2 = [energyAtNum energyAtNum2 energyAtNum3];
-% 
-%     hold on
-%     plot(numbers, energies2, 'k')
-%     text(numbers(3)+3, energies2(3)-5, strcat(num2str(findWeight), ' lbs'));
-% 
-% end
+grossweights = [2000 3000 4000 5000];
+for k = 1:length(grossweights)
+    findWeight = grossweights(k);
+    numAtWeight = interp1(weights(1:length(dist1)), dist1, findWeight);
+    energyAtNum = interp1(dist1, energies(1:length(dist1)), numAtWeight);
+
+    numAtWeight2 = interp1(weights(1:length(dist2),2), dist2, findWeight);
+    energyAtNum2 = interp1(dist2, energies(1:length(dist2),2), numAtWeight2);
+
+    numAtWeight3 = interp1(weights(48:length(dist3),3), dist3(48:end), findWeight);
+    energyAtNum3 = interp1(dist3, energies(1:length(dist3),3), numAtWeight3);
+
+    numbers = [numAtWeight numAtWeight2 numAtWeight3];
+    energies2 = [energyAtNum energyAtNum2 energyAtNum3];
+
+    hold on
+    plot(numbers, energies2, 'k')
+    text(numbers(3)+3, energies2(3)-5, strcat(num2str(findWeight), ' lbs'));
+
+end
 
 leg = legend('144 Wh/kg', '250 Wh/kg', '400 Wh/kg', 'Location', 'NW');
 title(leg, 'Battery Energy Density')
 
+figure;
+plot(bm_ratio(1:33,1),':k','LineWidth',2)
+hold on
+plot(bm_ratio(1:100,2),'--k','LineWidth',2)
+plot(bm_ratio(:,3),'k','LineWidth',2)
+leg = legend('144 Wh/kg', '250 Wh/kg', '400 Wh/kg', 'Location', 'NW');
+xlabel('Distance (miles)', 'FontSize', 17, 'FontWeight', 'bold')
+ylabel('Battery Mass Ratio', 'FontSize', 17, 'FontWeight', 'bold')
+box off
+set(gcf,'color','w');
+set(gca, 'linewidth', 2, 'FontSize', 12)
+leg.FontSize = 10;
+title(leg, 'Battery Energy Density')
 
 
 
