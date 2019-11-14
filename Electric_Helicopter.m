@@ -576,6 +576,8 @@ for j = 1:length(Ed_sweep)
                                bm = bm_Ed;
                                powcount(i,j) = 0 ;
                            end 
+                           bm_ratio(i,j) = bm_Ed/bm_pw;
+
          
                % If energy capacity used in battery weight calculations has
 
@@ -720,15 +722,17 @@ hold on
 plot(dist3, energies(1:length(dist3), 3), 'r', 'LineWidth', 3)
 box off
 set(gcf,'color','w');
+
 xlabel('Distance (miles)', 'FontSize', 17)
 ylabel('Total Energy (kWh)', 'FontSize', 17)
 set(gca, 'linewidth', 2, 'FontSize', 15)
 
-% %grossweights = [2000 3000 4000 5000];
-grossweights = 6000;
-% %for k = 1:length(grossweights)
-%     %findWeight = grossweights(k);
-    findWeight = grossweights;
+xlabel('Distance (miles)')
+ylabel('Total Energy (kWh)')
+
+grossweights = [2000 3000 4000 5000];
+for k = 1:length(grossweights)
+    findWeight = grossweights(k);
     numAtWeight = interp1(weights(1:length(dist1)), dist1, findWeight);
     energyAtNum = interp1(dist1, energies(1:length(dist1)), numAtWeight);
 
@@ -745,12 +749,26 @@ grossweights = 6000;
     plot(numbers, energies2, 'k')
     text(numbers(3)+3, energies2(3)-5, strcat(' ', num2str(findWeight), ' lbs'), 'FontSize', 13);
    
-% %end
-% 
+end 
+
  leg = legend('144 Wh/kg', '250 Wh/kg', '400 Wh/kg', 'Location', 'NW');
  title(leg, 'Battery Energy Density')
  leg.FontSize = 13;
 
+
+figure;
+plot(bm_ratio(1:33,1),':k','LineWidth',2)
+hold on
+plot(bm_ratio(1:100,2),'--k','LineWidth',2)
+plot(bm_ratio(:,3),'k','LineWidth',2)
+leg = legend('144 Wh/kg', '250 Wh/kg', '400 Wh/kg', 'Location', 'NW');
+xlabel('Distance (miles)', 'FontSize', 17, 'FontWeight', 'bold')
+ylabel('Battery Mass Ratio', 'FontSize', 17, 'FontWeight', 'bold')
+box off
+set(gcf,'color','w');
+set(gca, 'linewidth', 2, 'FontSize', 12)
+leg.FontSize = 10;
+title(leg, 'Battery Energy Density')
 
 
 
