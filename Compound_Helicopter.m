@@ -28,7 +28,7 @@ climbTime = climbDist/rateClimb; % climbing time [s]
 
 reserve = 20 * 60; % reserve requirement [s] (20 min) (FAA requirements)
 
-Ed = 250; % Energy Density [W*h/kg] (144 Wh/kg Kokam LiPo battery energy density - used in Freidrich and Robertson 2015)
+Ed = 144; % Energy Density [W*h/kg] (144 Wh/kg Kokam LiPo battery energy density - used in Freidrich and Robertson 2015)
 
 %% Data Loading
 % Atmospheric Data for Interpolation based on Altitude
@@ -52,47 +52,47 @@ flatPlateWeightData = flatPlateData(:,1); % gross weight [lbs]
 flatPlateAreaData = flatPlateData(:,2); % equivalent flat plate area [ft^2]
 
 %% Analysis
-
-energies = [];
-weights = [];
-radii = [];
-hoverpowers = [];
-
-Ed_sweep = [144 250 400];
-
-for j = 1:length(Ed_sweep)
-    Ed = Ed_sweep(j);
-    if Ed == 144
-%        passengers = 1:10;
-%        speeds = [25:120]*.5144;
-        distances = [5:2000]*1609;
-%        hovers = 10:10:1010;
-    elseif Ed == 250
-%        passengers = 1:10;
-%        speeds = [25:120]*.5144;
-        
-        distances = [5:2000]*1609;
-%        hovers = 10:10:2110;
-    elseif Ed ==400
-%        passengers = 1:10;
-%        speeds = [25:120]*.5144;
-        distances = [5:2000]*1609;
-%        hovers = 10:10:3700;
-    end
-    
-    for i = 1:length(distances)
-        
-%          numPass = passengers(i);
-%          payload = avgW * numPass;
-        
-%         cruiseSpeed = speeds(i);
-%         Vfwd = cruiseSpeed;
+% 
+% energies = [];
+% weights = [];
+% radii = [];
+% hoverpowers = [];
+% 
+% Ed_sweep = [144 250 400];
+% 
+% for j = 1:length(Ed_sweep)
+%     Ed = Ed_sweep(j);
+%     if Ed == 144
+% %        passengers = 1:10;
+% %        speeds = [25:120]*.5144;
+%         distances = [5:2000]*1609;
+% %        hovers = 10:10:1010;
+%     elseif Ed == 250
+% %        passengers = 1:10;
+% %        speeds = [25:120]*.5144;
+%         
+%         distances = [5:2000]*1609;
+% %       hovers = 10:10:2110;
+%     elseif Ed ==400
+% %        passengers = 1:10;
+% %        speeds = [25:120]*.5144;
+%          distances = [5:2000]*1609;
+% %       hovers = 10:10:3700;
+%     end
+%     
+%     for i = 1:length(distances)
+%         
+% %          numPass = passengers(i);
+% %          payload = avgW * numPass;
+%         
+% %          cruiseSpeed = speeds(i);
+% %          Vfwd = cruiseSpeed;
+% %          cruiseTime = dist/Vfwd;
+% 
+%         dist = distances(i);
 %         cruiseTime = dist/Vfwd;
 
-        dist = distances(i);
-        cruiseTime = dist/Vfwd;
-
-%          hoverTime = hovers(i);
+%         hoverTime = hovers(i);
         
         % Main Rotor Design
         
@@ -157,7 +157,7 @@ for j = 1:length(Ed_sweep)
         We = We_init; % initialize empty weight [N]
         P_hover = 0; % initialize power [W]
         
-        Ec = 20000; % initial guess for energy capacity [W*hr]
+%         Ec = 20000; % initial guess for energy capacity [W*hr]
         
         Mbatt = 100; %kg 
         Ec = Ed * Mbatt; % initial guess for energy capacity [W*hr]
@@ -200,7 +200,7 @@ for j = 1:length(Ed_sweep)
                 
                 while cond2 == 1
                     innerLoop_counter = innerLoop_counter + 1;
-                    
+                    Ec = Ed * Mbatt; % initial guess for energy capacity [W*hr]
                     % If figure of merit is not in the right range, use updated value
                     % of rotational velocity instead
                     if FM == 1
@@ -660,10 +660,10 @@ for j = 1:length(Ed_sweep)
 %                 % converged, exit the outer loop
                            if bm_pw > bm_Ed
                                bm = bm_pw;
-                               powcal(i,j)=1;
+                               %powcal(i,j)=1;
                            else 
                                bm = bm_Ed;
-                               powcal(i,j) = 0;
+                               %powcal(i,j) = 0;
                            end
 
                
@@ -686,23 +686,23 @@ for j = 1:length(Ed_sweep)
                     else
                         cond1 = 0;
                     end
-
-            end
-            
-        end
+% 
+%             end
+%             
+%         end
         
         
-        energies(i,j) = Ec_tot/1000;
-        weights(i,j) = Wg_new * 0.2247;
-        radii(i,j) = R*3.28;
-        hoverpowers(i,j) = Ptotal_hover/1000;
+%         energies(i,j) = Ec_tot/1000;
+%         weights(i,j) = Wg_new * 0.2247;
+%         radii(i,j) = R*3.28;
+%         hoverpowers(i,j) = Ptotal_hover/1000;
         
     end
     
 end
 
 
-Re = Vfwd*c_wing/nu;
+% Re = Vfwd*c_wing/nu;
 
 %% Outputs
 GrossWeightLbs = Wg_new * 0.2247
@@ -778,20 +778,20 @@ RPM = Omega * 9.549
 % leg.FontSize = 10;
 
 % DISTANCE
-figure(3)
-dist1 = 5:2000;
-dist2 = 5:2000;
-dist3 = 5:2000;
-plot(dist1, energies(1:length(dist1), 1), ':k', 'LineWidth', 2)
-hold on
-plot(dist2, energies(1:length(dist2), 2), '--k', 'LineWidth', 2)
-hold on
-plot(dist3, energies(1:length(dist3), 3), 'k', 'LineWidth', 2)
-box off
-set(gcf,'color','w');
-xlabel('Distance (miles)', 'FontSize', 14)
-ylabel('Total Energy (kWh)', 'FontSize', 14)
-set(gca, 'linewidth', 2, 'FontSize', 12)
+% figure(3)
+% dist1 = 5:2000;
+% dist2 = 5:2000;
+% dist3 = 5:2000;
+% plot(dist1, energies(1:length(dist1), 1), ':k', 'LineWidth', 2)
+% hold on
+% plot(dist2, energies(1:length(dist2), 2), '--k', 'LineWidth', 2)
+% hold on
+% plot(dist3, energies(1:length(dist3), 3), 'k', 'LineWidth', 2)
+% box off
+% set(gcf,'color','w');
+% xlabel('Distance (miles)', 'FontSize', 14)
+% ylabel('Total Energy (kWh)', 'FontSize', 14)
+% set(gca, 'linewidth', 2, 'FontSize', 12)
 % 
 % grossweights = [3000 6000 9000 12000 15000];
 % for k = 1:length(grossweights)
@@ -814,9 +814,9 @@ set(gca, 'linewidth', 2, 'FontSize', 12)
 % 
 % end
 
-leg = legend('144 Wh/kg', '250 Wh/kg', '400 Wh/kg', 'Location', 'NW');
-title(leg, 'Battery Energy Density')
-leg.FontSize = 10;
+% leg = legend('144 Wh/kg', '250 Wh/kg', '400 Wh/kg', 'Location', 'NW');
+% title(leg, 'Battery Energy Density')
+% leg.FontSize = 10;
 
 % % HOVER TIME
 % figure(4)
@@ -833,7 +833,7 @@ leg.FontSize = 10;
 % xlabel('Hover Time (sec)', 'FontSize', 14)
 % ylabel('Total Energy (kWh)', 'FontSize', 14)
 % set(gca, 'linewidth', 2, 'FontSize', 12)
-% 
+
 % % grossweights = [3000 6000 9000 12000 15000];
 % % for k = 1:length(grossweights)
 % %     findWeight = grossweights(k);
