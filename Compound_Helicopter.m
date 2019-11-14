@@ -139,7 +139,7 @@ for j = 1:length(Ed_sweep)
 %         cruiseTime = dist/Vfwd;
 
 
-%          hoverTime = hovers(i);
+         hoverTime = hovers(i);
 
         % Main Rotor Design
         
@@ -207,7 +207,6 @@ for j = 1:length(Ed_sweep)
 
         
 %         Ec = 20000; % initial guess for energy capacity [W*hr]
-
         
         Mbatt = 100; %kg 
         Ec = Ed * Mbatt; % initial guess for energy capacity [W*hr]
@@ -711,10 +710,10 @@ for j = 1:length(Ed_sweep)
 %                 % converged, exit the outer loop
                            if bm_pw > bm_Ed
                                bm = bm_pw;
-                               powcal(i,j)=1;
+                               %powcal(i,j)=1;
                            else 
                                bm = bm_Ed;
-                               powcal(i,j) = 0;
+                               %powcal(i,j) = 0;
                            end
                            bm_ratio(i,j) = bm_Ed/bm_pw;
 
@@ -738,7 +737,7 @@ for j = 1:length(Ed_sweep)
                     else
                         cond1 = 0;
                     end
-
+% 
             end
             
         end
@@ -752,6 +751,9 @@ for j = 1:length(Ed_sweep)
     end
     
 end
+
+    
+
 
 
 %% Outputs
@@ -893,7 +895,7 @@ ylabel('Total Energy (kWh)', 'FontSize', 14)
 set(gca, 'linewidth', 2, 'FontSize', 12)
 
 grossweights = [3000 6000 9000 12000 15000];
-grossweights = [6000];
+
 for k = 1:length(grossweights)
     findWeight = grossweights(k);
     numAtWeight = interp1(weights(1:length(time1)), time1, findWeight);
@@ -932,3 +934,4 @@ set(gcf,'color','w');
 set(gca, 'linewidth', 2, 'FontSize', 12)
 leg.FontSize = 10;
 title(leg, 'Battery Energy Density')
+
