@@ -72,17 +72,18 @@ for j = 1:length(Ed_sweep)
     if Ed == 144
          %passengers = 1:10;
                  %speeds = [60:120]*.5144;
-        distances = [5:37]*1609;
+        distances = [5:61]*1609;
+        distances = 
 %         hovers = 10:10:520;
     elseif Ed == 250
         %passengers = 1:10;
                 %speeds = [35:120]*.5144;
-        distances = [5:104]*1609; 
+        distances = [5:170]*1609; 
 %         hovers = 10:10:2000;
     elseif Ed ==400
         %passengers = 2:10;
                 %speeds = [25:120]*.5144;
-        distances = [5:199]*1609;
+        distances = [5:309]*1609;
 %         hovers = 10:10:4140;
     end
     
@@ -304,7 +305,7 @@ for j = 1:length(Ed_sweep)
                 if mainLoop_counter == 1 %initialize through the first iteration, until Pow_max is calculated later
                     Pow_max = P_hover_new; 
                 else 
-                    Pow_max = Pow_max; 
+                    Pow_max = Pow_max;
                 end 
              % Estimate Motor and Invertor Weight more advanced
 
@@ -332,8 +333,27 @@ for j = 1:length(Ed_sweep)
             
             inv_eff = 0.99; % Uranda
             mot_eff = 1 ;
-            Pmot = Pow_max/mot_eff; % mult by motor efficiency when found 
-            Mm = Pmot/SPmot;
+            if mainLoop_counter == 1
+                Pmot = Pow_max/mot_eff; % mult by motor efficiency when found 
+                Mm = Pmot/SPmot;
+                Ptotal_hover = P_hover_new;
+                Ptotal_fwd = P_hover_new;
+                PtTail_hover = 0;
+                PtTail_fwd = 0;
+                Pt_hover = 0;
+            else
+                if max([Ptotal_hover Ptotal_fwd]) == Ptotal_hover
+                    Mm_tail = PtTail_hover/SPmot;
+                    Mm_main = Pt_hover/SPmot;
+                elseif max([Ptotal_hover Ptotal_fwd]) == Ptotal_fwd
+                    Mm_tail = PtTail_fwd/SPmot;
+                    Mm_main = Pt_fwd/SPmot;
+                end
+                Mm = Mm_tail + Mm_main;
+            end
+                    
+%             Pmot = Pow_max/mot_eff; % mult by motor efficiency when found 
+%             Mm = Pmot/SPmot; 
             
             Pinv = Pow_max/(inv_eff*mot_eff);% determines the power of the invertor as the maximum power needed during the mission
             Minv = Pinv/SPinv;
@@ -420,7 +440,6 @@ for j = 1:length(Ed_sweep)
             Omega_eng = (Omega * 9.549) * 6; % engine output speed [rpm] (ratio ranges from 6-1 to 9-1)
             frs = 0.13; % rotor shaft weight fraction
             W_gearbox = (1 - frs) * 95.7634 * numRotor^0.38553 * Pds^0.78137 * Omega_eng^0.09899/(Omega * 9.549)^0.80686; % weight of gearbox [lbs]
-            
             W_rotorshaft = frs * 95.7634 * numRotor^0.38553 * Pds^0.78137 * Omega_eng^0.09899/(Omega * 9.549)^0.80686; % weight of rotor shaft [lbs]
             
             Qds = Pds / (Omega * 9.549); % [hp/rpm]
@@ -440,8 +459,9 @@ for j = 1:length(Ed_sweep)
             % Attempt 2
             %     We_new = ((W_mainrotor + W_tailrotor + W_flightcontrol + W_landinggear + W_fuselage) * 4.45 + W_battery + W_propulsion); % [N]
             % Attempt 3
-            We_new =  x * (W_blades + W_hub + W_tailrotor + W_fuselage + W_HT + W_VT + W_landinggear +  W_gearbox + W_rotorshaft + W_driveshaft + W_rotorbrakes + W_controls) * 4.45 + 1.1*(W_battery + W_propulsion); % [N]
-            
+%             We_new =  x * (W_blades + W_hub + W_tailrotor + W_fuselage + W_HT + W_VT + W_landinggear +  W_gearbox + W_rotorshaft + W_driveshaft + W_rotorbrakes + W_controls) * 4.45 + 1.1*(W_battery + W_propulsion); % [N]
+            We_new =  x * (W_blades + W_hub + W_tailrotor + W_fuselage + W_HT + W_VT + W_landinggear + W_rotorshaft + W_rotorbrakes + W_controls) * 4.45 + 1.1*(W_battery + W_propulsion); % [N]
+
             Wg_new = We_new + (payload * 4.45); % new estimate of gross weight [N]
             
             Cp_ideal = Ct^(3/2)/sqrt(2);
@@ -705,9 +725,9 @@ RPM = Omega * 9.549
 
 % % DISTANCE
 figure(3)
-dist1 = 5:37;
-dist2 = 5:104;
-dist3 = 5:199;
+dist1 = 5:61;
+dist2 = 5:170;
+dist3 = 5:309;
 
 
 plot(dist1, energies(1:length(dist1), 1), ':k', 'LineWidth', 2)
@@ -726,10 +746,10 @@ for k = 1:length(grossweights)
     numAtWeight = interp1(weights(1:length(dist1)), dist1, findWeight);
     energyAtNum = interp1(dist1, energies(1:length(dist1)), numAtWeight);
 
-    numAtWeight2 = interp1(weights(1:length(dist2),2), dist2, findWeight);
+    numAtWeight2 = interp1(weights(16:length(dist2),2), dist2(16:end), findWeight);
     energyAtNum2 = interp1(dist2, energies(1:length(dist2),2), numAtWeight2);
 
-    numAtWeight3 = interp1(weights(48:length(dist3),3), dist3(48:end), findWeight);
+    numAtWeight3 = interp1(weights(53:length(dist3),3), dist3(53:end), findWeight);
     energyAtNum3 = interp1(dist3, energies(1:length(dist3),3), numAtWeight3);
 
     numbers = [numAtWeight numAtWeight2 numAtWeight3];
@@ -738,7 +758,6 @@ for k = 1:length(grossweights)
     hold on
     plot(numbers, energies2, 'k')
     text(numbers(3)+3, energies2(3)-5, strcat(num2str(findWeight), ' lbs'));
-
 end
 
 leg = legend('144 Wh/kg', '250 Wh/kg', '400 Wh/kg', 'Location', 'NW');

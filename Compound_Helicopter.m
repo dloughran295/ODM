@@ -1,6 +1,6 @@
 clc;
 clear all;
-% close all;
+close all;
 
 
 %% Inputs
@@ -68,6 +68,7 @@ for j = 1:length(Ed_sweep)
 %         distances = [5:58]*1609;
 %         distances = [5:63]*1609;
        hovers = 10:10:1010;
+       hovers = 10:10:1080;
     elseif Ed == 250
 %        passengers = 1:14;
 %        speeds = [25:120]*.5144;
@@ -75,16 +76,47 @@ for j = 1:length(Ed_sweep)
 %         distances = [5:141]*1609;
 %         distances = [5:182]*1609;
        hovers = 10:10:3300;
+       hovers = 10:10:3330;
     elseif Ed ==400
 %        passengers = 1:14;
 %        speeds = [25:120]*.5144;
 %         distances = [5:257]*1609;
 %         distances = [5:332]*1609;
        hovers = 10:10:6170;
+       hovers = 10:10:6620;
        
     end
     
     for i = 1:length(hovers)
+        if01 = 0;
+        if02 = 0;
+        if03 = 0;
+        if04 = 0;
+        if05 = 0;
+        if06 = 0;
+        if07 = 0;
+        if08 = 0;
+        if09 = 0;
+        if10 = 0;
+        if11 = 0;
+        if12 = 0;
+        if13 = 0;
+        if14 = 0;
+        if15 = 0;
+        if16 = 0;
+        if17 = 0;
+        if18 = 0;
+        if19 = 0;
+        if20 = 0;
+        if21 = 0;
+        if22 = 0;
+        if23 = 0;
+        if24 = 0;
+        if25 = 0;
+        if26 = 0;
+        if27 = 0;
+        if28 = 0;
+        if29 = 0;
         
 %          numPass = passengers(i);
 %          payload = avgW * numPass;
@@ -184,6 +216,7 @@ for j = 1:length(Ed_sweep)
             mainLoop_counter = mainLoop_counter+1;
             
             if skipInitial == 0
+                if01 = 1;
                 
                 % Determine rotor radius
                 R = (0.0011 * (Wg * 0.2247) + 11.496) * 0.3048; % rotor radius [m] (relation determined from data in Leishman)
@@ -196,6 +229,7 @@ for j = 1:length(Ed_sweep)
                 A = pi * R^2; % disk area [m^2]
                 
                 if Rflag == 1
+                    if02 = 1;
                     R = R_new; % use new radius
                     Omega_max = Vmaxtip / R; % recalculate maximum angular velocity
                     A = pi * R^2;  % recalculate area
@@ -210,16 +244,19 @@ for j = 1:length(Ed_sweep)
                     % If figure of merit is not in the right range, use updated value
                     % of rotational velocity instead
                     if FM == 1
+                        if03 = 1;
                         Omega = Omega_new;
                     end
                     
                     if R < 3 % if R is too low, increase R
+                        if04 = 1;
                         Rflag = 1; % allows radius change at the beginning of the loop
                         R_new = R + 0.01*R; % increase radius
                         R = R_new; % use new radius
                         Omega_max = Vmaxtip / R; % recalculate maximum angular velocity
                         A = pi * R^2;  % recalculate area
                     elseif R >10 % if R is too high, decrease radius
+                        if05 = 1;
                         Rflag = 1; % allows radius change at the beginning of the loop
                         R_new = R - 0.01*R; % decrease radius
                         R = R_new; % use new radius
@@ -230,8 +267,10 @@ for j = 1:length(Ed_sweep)
                     
                     
                     if Omega < 20 % If omega is too low, increase omega
+                        if06 = 1;
                         Omega = Omega + 0.01 * Omega;
                     elseif Omega > Omega_max % if Omega is too high, decrease omega
+                        if07 = 1;
                         Omega = Omega - 0.01*Omega;
                     end
                     
@@ -250,6 +289,7 @@ for j = 1:length(Ed_sweep)
                     % If figure of merit is not in the right range, use updated value
                     % of chord length instead
                     if FM == 2
+                        if08 = 1;
                         c = c_new;
                         sigma = c * numBlades/ (pi * R); % recalculate solidity
                         BL = Ct/sigma; % recalculate blade loading
@@ -259,8 +299,10 @@ for j = 1:length(Ed_sweep)
                     
                     % Adjust rotational velocity/radius until aspect ratio is between 15 and 20
                     if AR >= 15 && AR <= 20 && R >=3 && R <= 10 && Omega >= 20 && Omega <=Omega_max
+                        if09 = 1;
                         cond2 = 0; % exit loop
                     elseif AR > 20
+                        if10 = 1;
                         % decrease radius and omega
                         Rflag = 1; % allows radius change at the beginning of the loop
                         R_new = R - 0.01*R; % decrease radius
@@ -270,6 +312,7 @@ for j = 1:length(Ed_sweep)
                         
                         Omega = Omega - 0.01 * Omega;
                     elseif AR < 15
+                        if11 = 1;
                         Rflag = 1; % allows radius change at the beginning of the loop
                         R_new = R + 0.01*R; % increase radius
                         R = R_new; % use new radius
@@ -309,8 +352,10 @@ for j = 1:length(Ed_sweep)
             f_width = 6 * 0.3048; % estimate for width of fuselage (6 ft) [m]
             
             if R*2 <= b_wing
+                if12 = 1;
                 zeta1 = 0;
             else
+                if13 = 1;
                 zeta1 = R - b_wing/2;
             end
             
@@ -355,7 +400,8 @@ for j = 1:length(Ed_sweep)
             %     Pi_hover = (1/B) * (T + 0.5 * rho * Vi^2 * Cd_plate * A_eff)^(1.5)/sqrt(2 * rho * A); % induced power of main rotor with tip loss (with drag of flat plate added) [W]
             Pi_hover = (1/B) * (T*(1 + wingDvT/100))^(1.5)/sqrt(2 * rho * A); % changed to add download increase to thrust
             
-            Pi_hover = (1/B) * T^(1.5)/sqrt(2 * rho * A); % induced power of main rotor with tip loss [W]
+%             Pi_hover = (1/B) * T^(1.5)/sqrt(2 * rho * A); % induced power
+%             of main rotor with tip loss [W] (this ones for electric)
             
             Po_hover = 0.125 * sigma * Cdo * rho * A * Vtip^3; % profile power of main rotor [W]
             P_hover_new = Pi_hover + Po_hover; % calculated total power of main rotor in hover
@@ -367,8 +413,10 @@ for j = 1:length(Ed_sweep)
             % Power Density Calculations - Battery needs enough Power to cover highest component of Power 
              
                 if mainLoop_counter == 1 %initialize through the first iteration, until Pow_max is calculated later
+                    if14 = 1;
                     Pow_max = P_hover_new; 
                 else 
+                    if15 = 1;
                     Pow_max = Pow_max; 
                 end 
              % Estimate Motor and Invertor Weight more advanced
@@ -378,12 +426,15 @@ for j = 1:length(Ed_sweep)
                 % if ed = 144, etc. etc. 
  
             if Ed <= 144 % this constraint will include the test cases 
+                if16 = 1;
                 SPinv = 2200; %W/kg 
                 SPmot = 2000; %W/kg 
             elseif Ed == 250
+                if17 = 1;
                 SPinv = 9000;
                 SPmot = 9000; 
             else 
+                if18 = 1;
                 SPinv = 19000;
                 SPmot = 16000; 
             end 
@@ -397,8 +448,25 @@ for j = 1:length(Ed_sweep)
             
             inv_eff = 0.99; % Uranda
             mot_eff = 1 ;
-            Pmot = Pow_max/mot_eff; % mult by motor efficiency when found 
-            Mm = Pmot/SPmot;
+            
+            if mainLoop_counter == 1
+                Pmot = Pow_max/mot_eff; % mult by motor efficiency when found 
+                Mm = Pmot/SPmot;
+                Ptotal_hover = P_hover_new;
+                Ptotal_fwd = P_hover_new;
+                PtTail_hover = 0;
+                PtTail_fwd = 0;
+                Pt_hover = 0;
+            else
+                if max([Ptotal_hover Ptotal_fwd]) == Ptotal_hover
+                    Mm_tail = PtTail_hover/SPmot;
+                    Mm_main = Pt_hover/SPmot;
+                elseif max([Ptotal_hover Ptotal_fwd]) == Ptotal_fwd
+                    Mm_tail = PtTail_fwd/SPmot;
+                    Mm_main = Pt_fwd/SPmot;
+                end
+                Mm = Mm_tail + Mm_main;
+            end
             
             Pinv = Pow_max/(inv_eff*mot_eff);% determines the power of the invertor as the maximum power needed during the mission
             Minv = Pinv/SPinv;
@@ -413,8 +481,10 @@ for j = 1:length(Ed_sweep)
 %                 % If energy capacity used in battery weight calculations has
 %                 % converged, exit the outer loop
                            if bm_pw > bm_Ed
+                               if19 = 1;
                                bm = bm_pw;
                            else 
+                               if20 = 1;
                                bm = bm_Ed;
                            end 
             
@@ -512,7 +582,8 @@ for j = 1:length(Ed_sweep)
             % Attempt 2
             %     We_new = ((W_mainrotor + W_tailrotor + W_flightcontrol + W_landinggear + W_fuselage) * 4.45 + W_battery + W_propulsion); % [N]
             % Attempt 3
-            We_new =  x * (W_blades + W_hub + W_tailrotor + W_fuselage + W_HT + W_VT + W_landinggear +  W_gearbox + W_rotorshaft + W_driveshaft + W_rotorbrakes + W_controls) * 4.45 + 1.1*(W_battery + W_propulsion); % [N]
+%             We_new =  x * (W_blades + W_hub + W_tailrotor + W_fuselage + W_HT + W_VT + W_landinggear +  W_gearbox + W_rotorshaft + W_driveshaft + W_rotorbrakes + W_controls) * 4.45 + 1.1*(W_battery + W_propulsion); % [N]
+            We_new =  x * (W_blades + W_hub + W_tailrotor + W_fuselage + W_HT + W_VT + W_landinggear +  W_rotorshaft + W_rotorbrakes + W_controls) * 4.45 + 1.1*(W_battery + W_propulsion); % [N]
 
             
             
@@ -524,7 +595,9 @@ for j = 1:length(Ed_sweep)
             W_wing = 5.66411 * fLGloc * (Wg * 0.2247/(1000 * cos(sweepAngle)))^0.847 * nz^0.39579 * (s_wing * 10.7639)^0.21754 * AR_wing^0.50016 * ((1+lambda)/tau)^0.09359 * (1-bfold)^-0.14356; % wing weight [lbs]
             
             % New empty weight
-            We_new =  x * (W_blades + W_hub + W_tailrotor + W_fuselage + W_HT + W_VT + W_landinggear +  W_gearbox + W_rotorshaft + W_driveshaft + W_rotorbrakes + W_controls + W_wing) * 4.45 + 1.1*(W_battery + W_propulsion); % [N]
+%             We_new =  x * (W_blades + W_hub + W_tailrotor + W_fuselage + W_HT + W_VT + W_landinggear +  W_gearbox + W_rotorshaft + W_driveshaft + W_rotorbrakes + W_controls + W_wing) * 4.45 + 1.1*(W_battery + W_propulsion); % [N]
+            We_new =  x * (W_blades + W_hub + W_tailrotor + W_fuselage + W_HT + W_VT + W_landinggear + W_rotorshaft + W_rotorbrakes + W_controls + W_wing) * 4.45 + 1.1*(W_battery + W_propulsion); % [N]
+
             
             Wg_new = We_new + (payload * 4.45); % new estimate of gross weight [N]
             
@@ -538,7 +611,9 @@ for j = 1:length(Ed_sweep)
             % If total power and gross weight have converged within 10%, adjust
             % geometry to get figure of merit above 0.7 
             if abs(P_hover_new - P_hover)/P_hover < 0.01 && abs(Wg_new - Wg)/Wg < 0.01
+                if21 = 1;
                 if figureMerit < 0.7
+                    if22 = 1;
                     FM = 1; % first case for figure of merit adjustments
                     % reduce rotational velocity
                     skipInitial = 0;
@@ -563,10 +638,12 @@ for j = 1:length(Ed_sweep)
 
 
                 else
+                    if23 = 1;
                     powerCalc = 1; % move to final power calculations if power/weight have converged and figure of merit is within specifications
                     T = Wg_new; % set thrust equal to new gross weight
                 end
             else
+                if24 = 1;
                 FM = 0;
                 skipInitial = 0;
                 % Recalculate hover power using new gross weight estimate
@@ -577,6 +654,7 @@ for j = 1:length(Ed_sweep)
             end
             
             if powerCalc == 1
+                if25 = 1;
                 
                 % Determine the power required to hover (changed for compounds - based on Pi_hover)
                 PP_OGE = 0.708 * (h/(R*2))^3 - 1.4569 * (h/(R*2))^2 + 1.3432 * (h/(R*2)) + 0.5147; % Power/Power out of ground effect
@@ -665,9 +743,11 @@ for j = 1:length(Ed_sweep)
 %                 % If energy capacity used in battery weight calculations has
 %                 % converged, exit the outer loop
                            if bm_pw > bm_Ed
+                               if26 = 1;
                                bm = bm_pw;
                                powcal(i,j)=1;
                            else 
+                               if27 = 1;
                                bm = bm_Ed;
                                powcal(i,j) = 0;
                            end
@@ -686,11 +766,13 @@ for j = 1:length(Ed_sweep)
 %                     cond1 = 0;
 %                 end
                 if abs(bm - Mbatt)/Mbatt > 0.01
+                    if28 = 1;
                         del = bm - Mbatt;
                         Mbatt = Mbatt + 0.1 * del;
                         % Ec = Ec_tot;
                         % skipInitial = 1;
                     else
+                        if29 = 1;
                         cond1 = 0;
                     end
 
@@ -704,6 +786,11 @@ for j = 1:length(Ed_sweep)
         radii(i,j) = R*3.28;
         hoverpowers(i,j) = Ptotal_hover/1000;
         
+        if hovers(i) == 2400
+            first_case = [if01 if02 if03 if04 if05 if06 if07 if08 if09 if10 if11 if12 if13 if14 if15 if16 if17 if18 if19 if20 if21 if22 if23 if24 if25 if26 if27 if28 if29];
+        elseif hovers(i) == 2600
+            second_case = [if01 if02 if03 if04 if05 if06 if07 if08 if09 if10 if11 if12 if13 if14 if15 if16 if17 if18 if19 if20 if21 if22 if23 if24 if25 if26 if27 if28 if29];
+        end
     end
     
 end
@@ -835,9 +922,9 @@ RPM = Omega * 9.549
 
 % % HOVER TIME
 figure(4)
-time1 = 10:10:1010;
-time2 = 10:10:3300;
-time3 = 10:10:6170;
+time1 = 10:10:1210;
+time2 = 10:10:3600;
+time3 = 10:10:6620;
 plot(time1, energies(1:length(time1), 1), ':r', 'LineWidth', 2)
 hold on
 plot(time2, energies(1:length(time2), 2), '--r', 'LineWidth', 2)
@@ -850,7 +937,7 @@ ylabel('Total Energy (kWh)', 'FontSize', 14)
 set(gca, 'linewidth', 2, 'FontSize', 12)
 
 grossweights = [3000 6000 9000 12000 15000];
-grossweights = [6000];
+% grossweights = [6000];
 for k = 1:length(grossweights)
     findWeight = grossweights(k);
     numAtWeight = interp1(weights(1:length(time1)), time1, findWeight);
@@ -859,7 +946,7 @@ for k = 1:length(grossweights)
     numAtWeight2 = interp1(weights(1:length(time2),2), time2, findWeight);
     energyAtNum2 = interp1(time2, energies(1:length(time2),2), numAtWeight2);
 
-    numAtWeight3 = interp1(weights(89:length(time3),3), time3(89:end), findWeight);    
+    numAtWeight3 = interp1(weights(110:length(time3),3), time3(110:end), findWeight);    
     energyAtNum3 = interp1(time3, energies(1:length(time3),3), numAtWeight3);
 
     numbers = [numAtWeight numAtWeight2 numAtWeight3];
@@ -888,3 +975,18 @@ set(gcf,'color','w');
 set(gca, 'linewidth', 2, 'FontSize', 12)
 leg.FontSize = 10;
 title(leg, 'Battery Energy Density')
+
+figure(1) 
+set(gcf, 'color', 'w')
+subplot(2,2,1), plot(hovers,energies(:,1))
+xlabel('Aspect Ratio')
+ylabel('Energy (kJ)')
+subplot(2,2,2), plot(hovers, weights(:,1))
+xlabel('Aspect Ratio')
+ylabel('Weight (lbs)')
+subplot(2,2,3), plot(hovers, radii(:,1))
+xlabel('Aspect Ratio')
+ylabel('Radius (ft)')
+subplot(2,2,4), plot(hovers, hoverpowers(:,1))
+xlabel('Aspect Ratio')
+ylabel('Hover Power (kW)')
