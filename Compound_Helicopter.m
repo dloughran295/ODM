@@ -7,6 +7,10 @@ close all;
 
 % Mission Profile
 
+plotlambda = [];
+plotAR = [];
+plotenergies = []; 
+
 numPass = 2; % number of passengers (including pilot)
 avgW = 200; % average weight of person [lbs]
 payload = avgW * numPass; % total payload weight [lbs]
@@ -28,7 +32,7 @@ climbTime = climbDist/rateClimb; % climbing time [s]
 
 reserve = 20 * 60; % reserve requirement [s] (20 min) (FAA requirements)
 
-Ed = 250; % Energy Density [W*h/kg] (144 Wh/kg Kokam LiPo battery energy density - used in Freidrich and Robertson 2015)
+Ed = 144; % Energy Density [W*h/kg] (144 Wh/kg Kokam LiPo battery energy density - used in Freidrich and Robertson 2015)
 
 %% Data Loading
 % Atmospheric Data for Interpolation based on Altitude
@@ -54,6 +58,44 @@ flatPlateAreaData = flatPlateData(:,2); % equivalent flat plate area [ft^2]
 %% Analysis
 
 energies = [];
+
+% weights = [];
+% radii = [];
+% hoverpowers = [];
+% 
+% Ed_sweep = [144 250 400];
+% 
+% for j = 1:length(Ed_sweep)
+%     Ed = Ed_sweep(j);
+%     if Ed == 144
+% %        passengers = 1:10;
+% %        speeds = [25:120]*.5144;
+%         distances = [5:58]*1609;
+% %        hovers = 10:10:1010;
+%     elseif Ed == 250
+% %        passengers = 1:10;
+% %        speeds = [25:120]*.5144;
+%         
+%         distances = [5:141]*1609;
+% %        hovers = 10:10:2110;
+%     elseif Ed ==400
+% %        passengers = 1:10;
+% %        speeds = [25:120]*.5144;
+%         distances = [5:257]*1609;
+% %        hovers = 10:10:3700;
+%     end
+%     
+%     for i = 1:length(distances)
+%         
+% %          numPass = passengers(i);
+% %          payload = avgW * numPass;
+%         
+% %         cruiseSpeed = speeds(i);
+% %         Vfwd = cruiseSpeed;
+% %         cruiseTime = dist/Vfwd;
+% 
+%         dist = distances(i);
+
 weights = [];
 radii = [];
 hoverpowers = [];
@@ -128,8 +170,9 @@ for j = 1:length(Ed_sweep)
 %         dist = distances(i);
 %         cruiseTime = dist/Vfwd;
 
+
          hoverTime = hovers(i);
-        
+
         % Main Rotor Design
         
         % Determine initial weight estimate
@@ -193,13 +236,14 @@ for j = 1:length(Ed_sweep)
         Wg = Wg_init; % initialize gross weight [N]
         We = We_init; % initialize empty weight [N]
         P_hover = 0; % initialize power [W]
+
         
 %         Ec = 20000; % initial guess for energy capacity [W*hr]
-
         
         Mbatt = 100; %kg 
         Ec = Ed * Mbatt; % initial guess for energy capacity [W*hr]
         
+
         FM = 0; % used for changing variables for figure of merit adjustments
         Rflag = 0; % used for changing radius for aspect ratio adjustments
         powerCalc = 0; % used for when to move to final power calculations
@@ -334,7 +378,7 @@ for j = 1:length(Ed_sweep)
             %     else
             %         AR_wing = 5;
             %     end
-            
+
             AR_wing = 10; % aspect ratio of the wing (Russell and Johnson)
             lambda = 0.8; % taper ratio of wing (Russell, Silva, Johnson, Yeo)
             e_wing = 0.8; % oswald's efficiency factor of wing (typical for propeller powered aircraft - Raymer)
@@ -745,11 +789,11 @@ for j = 1:length(Ed_sweep)
                            if bm_pw > bm_Ed
                                if26 = 1;
                                bm = bm_pw;
-                               powcal(i,j)=1;
+                               %powcal(i,j)=1;
                            else 
                                if27 = 1;
                                bm = bm_Ed;
-                               powcal(i,j) = 0;
+                               %powcal(i,j) = 0;
                            end
                            bm_ratio(i,j) = bm_Ed/bm_pw;
 
@@ -775,7 +819,7 @@ for j = 1:length(Ed_sweep)
                         if29 = 1;
                         cond1 = 0;
                     end
-
+% 
             end
             
         end
@@ -795,8 +839,9 @@ for j = 1:length(Ed_sweep)
     
 end
 
+    
 
-Re = Vfwd*c_wing/nu;
+
 
 %% Outputs
 GrossWeightLbs = Wg_new * 0.2247
@@ -876,9 +921,6 @@ RPM = Omega * 9.549
 
 % DISTANCE
 % figure(3)
-% dist1 = 5:58;
-% dist2 = 5:141;
-% dist3 = 5:257;
 % dist1 = 5:63;
 % dist2 = 5:182;
 % dist3 = 5:332;
@@ -888,6 +930,7 @@ RPM = Omega * 9.549
 % plot(dist2, energies(1:length(dist2), 2), '--r', 'LineWidth', 2)
 % hold on
 % plot(dist3, energies(1:length(dist3), 3), 'r', 'LineWidth', 2)
+
 % box off
 % set(gcf,'color','w');
 % xlabel('Distance (miles)', 'FontSize', 14)
@@ -895,7 +938,7 @@ RPM = Omega * 9.549
 % set(gca, 'linewidth', 2, 'FontSize', 12)
 % 
 % grossweights = [3000 6000 9000 12000 15000];
-% grossweights = [6000];
+
 % for k = 1:length(grossweights)
 %     findWeight = grossweights(k);
 %     numAtWeight = interp1(weights(1:length(dist1)), dist1, findWeight);
@@ -911,8 +954,10 @@ RPM = Omega * 9.549
 %     energies2 = [energyAtNum energyAtNum2 energyAtNum3];
 % 
 %     hold on
-%     plot(numbers, energies2, 'r', 'LineWidth', 1.5)
-%     text(numbers(3)+6, energies2(3)-6, strcat(num2str(findWeight), ' lbs'), 'FontSize', 12);
+
+%     plot(numbers, energies2, 'k', 'LineWidth', 1.5)
+%     text(numbers(3)+3, energies2(3)-5, strcat(num2str(findWeight), ' lbs'), 'FontSize', 12);
+
 % 
 % end
 % 
@@ -937,7 +982,9 @@ ylabel('Total Energy (kWh)', 'FontSize', 14)
 set(gca, 'linewidth', 2, 'FontSize', 12)
 
 grossweights = [3000 6000 9000 12000 15000];
+
 % grossweights = [6000];
+
 for k = 1:length(grossweights)
     findWeight = grossweights(k);
     numAtWeight = interp1(weights(1:length(time1)), time1, findWeight);
@@ -962,6 +1009,7 @@ leg = legend('144 Wh/kg', '250 Wh/kg', '400 Wh/kg', 'Location', 'NW');
 title(leg, 'Battery Energy Density')
 leg.FontSize = 10;
 
+
 figure;
 plot(bm_ratio(1:101,1),':k','LineWidth',2)
 hold on
@@ -975,6 +1023,7 @@ set(gcf,'color','w');
 set(gca, 'linewidth', 2, 'FontSize', 12)
 leg.FontSize = 10;
 title(leg, 'Battery Energy Density')
+
 
 figure(1) 
 set(gcf, 'color', 'w')
@@ -990,3 +1039,4 @@ ylabel('Radius (ft)')
 subplot(2,2,4), plot(hovers, hoverpowers(:,1))
 xlabel('Aspect Ratio')
 ylabel('Hover Power (kW)')
+
