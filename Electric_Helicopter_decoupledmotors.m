@@ -1,6 +1,6 @@
 clc;
 clear all;
-close all;
+%close all;
 
 %% Inputs
 
@@ -232,6 +232,12 @@ for j = 1:length(Ed_sweep)
                         Omega = Omega - 0.01*Omega;
                     end
                     
+% % OLD - tip mach # too high - had to eliminate arbitrary range of 20-50
+%                     if Omega < 20 % If omega is too low, increase omega
+%                         Omega = Omega + 0.01 * Omega;
+%                     elseif Omega > 50 % if Omega is too high, decrease omega
+%                         Omega = Omega - 0.01*Omega;
+%                     end
                     
                     Vtip = Omega * R; % tip velocity [m/s]
                     Ct = T/(A * rho * Vtip^2); % thrust coefficient
@@ -291,7 +297,7 @@ for j = 1:length(Ed_sweep)
             
             % Estimate battery weight
                 mb = Ec/Ed; % battery mass [kg]
-
+%             W_battery = mb*9.81 % [N] 
 %             
              % Power Density Calculations - Battery needs enough Power to cover highest component of Power 
              
@@ -370,10 +376,28 @@ for j = 1:length(Ed_sweep)
 
 
       
-
+            % Estimate motor weight
+%             Mm = P_hover_new/5200; % motor mass [kg] (assumption from Siemans motor - 260 kW/50 kg)
+%             W_propulsion = Mm * 9.81; % motor weight [N]
+            
 
 
             % Make second gross weight estimate
+            
+            % Attempt 1
+            %     W_blades1 = .2247*(0.06 * (We - W_battery) * R^0.4 * sigma^0.33); % [N]
+            %     W_hub1 = .2247*(0.0135 * (We - W-battery) * R^0.42); % [N]
+            %     W_fuselage = 0.21 * (We - W_battery); % [N]
+            %     W_controls = 0.06 * (We - W_battery); % [N]
+            %     W_electrical = 0.06 * (We - W_battery); % [N]
+            %     W_fixedequip = 0.28 * (We - W_battery); % [N]
+            
+            % Attempt 2
+            %     W_mainrotor = 1.7 * (Wg * 0.22481)^(0.342) * (R * 3.28)^1.58 * sigma^0.63; % [lbs]
+            %     W_tailrotor = 7.12 * (Wg * 0.22481/1000)^0.446 * (0.2*R*3.28)^1.62 * (2*sigma)^0.66; % [lbs]
+            %     W_flightcontrol = 0.0226 * (Wg * 0.22481)^0.712 * (Vfwd/0.5144)^0.653; % [lbs]
+            %     W_landinggear = 0.0475 * (Wg * 0.22481/1000)^0.975; % [lbs]
+            %     W_fuselage = 0.37 * (Wg * 0.22481)^0.598 * (R *3.28)^.942; % [lbs]
             
             % Attempt 3 - NDARC AFDD Weight Correlations
             x = 1; % technology factor
@@ -428,13 +452,14 @@ for j = 1:length(Ed_sweep)
             fnbsv = 1; % (=1.8984 for ballistically survivable, 1 otherwise)
             W_controls = 2.1785 * fnbsv * (Wg * 0.2247)^0.3999 * numRotor^1.3855; % flight controls weight [lbs]
             
+            
             %     Attempt 1
             %     We_new = W_blades + W_hub + W_fuselage + W_controls + W_electrical + W_fixedequip + W_propulsion + W_battery; % new estimate of empty weight [N]
             % Attempt 2
             %     We_new = ((W_mainrotor + W_tailrotor + W_flightcontrol + W_landinggear + W_fuselage) * 4.45 + W_battery + W_propulsion); % [N]
             % Attempt 3
-             We_new =  x * (W_blades + W_hub + W_tailrotor + W_fuselage + W_HT + W_VT + W_landinggear +  W_gearbox + W_rotorshaft + W_driveshaft + W_rotorbrakes + W_controls) * 4.45 + 1.1*(W_battery + W_propulsion); % [N]
-%            We_new =  x * (W_blades + W_hub + W_tailrotor + W_fuselage + W_HT + W_VT + W_landinggear + W_rotorshaft + W_rotorbrakes + W_controls) * 4.45 + 1.1*(W_battery + W_propulsion); % [N]
+%             We_new =  x * (W_blades + W_hub + W_tailrotor + W_fuselage + W_HT + W_VT + W_landinggear +  W_gearbox + W_rotorshaft + W_driveshaft + W_rotorbrakes + W_controls) * 4.45 + 1.1*(W_battery + W_propulsion); % [N]
+            We_new =  x * (W_blades + W_hub + W_tailrotor + W_fuselage + W_HT + W_VT + W_landinggear + W_rotorshaft + W_rotorbrakes + W_controls) * 4.45 + 1.1*(W_battery + W_propulsion); % [N]
 
             Wg_new = We_new + (payload * 4.45); % new estimate of gross weight [N]
             
@@ -442,7 +467,8 @@ for j = 1:length(Ed_sweep)
             Cp = P_hover_new/(rho * A *Vtip^3);
             
             figureMerit = Cp_ideal/Cp;
-          
+            %     figureMerit = Pi/Pt_new; % Figure of merit
+            
             % If total power and gross weight have converged within 10%, adjust
             % geometry to get figure of merit between 0.7 and 0.8
             if abs(P_hover_new - P_hover)/P_hover < 0.01 && abs(Wg_new - Wg)/Wg < 0.01
@@ -457,7 +483,17 @@ for j = 1:length(Ed_sweep)
                     Wg = Wg_new;
                     We = We_new;
                     powerCalc = 0;
-                   
+                    %         elseif figureMerit > 0.8
+                    %             skipInitial = 0;
+                    %             FM = 2; % second case for figure of merit adjustments
+                    %             % increase the chord length
+                    %             c_new = c + 0.01*c;
+                    %
+                    %             % Recalculate hover power/weight using adjustments
+                    %             Pt = Pt_new;
+                    %             Wg = Wg_new;
+                    %             We = We_new;
+                    %             powerCalc = 0;
                 else
                     powerCalc = 1; % move to final power calculations if power/weight have converged and figure of merit is within specifications
                     T = Wg_new; % set thrust equal to new gross weight
@@ -566,6 +602,21 @@ for j = 1:length(Ed_sweep)
 
                 % converged, exit the outer loop
 
+% P_max = max([Pc, Ptotal_hover, Ptotal_fwd])
+
+%            energyCSBatt = bm * Ed; %energy of the constraint sized (CS) battery based on either the power constraint or energy constraint (whichever is driving)
+%   
+%             if abs(energyCSBatt - Ec_tot)/Ec_tot > 0.01
+%                     del = Ec_tot - Ec;
+%                     Ec = Ec + 0.1 * del;
+%                     % Ec = Ec_tot;
+%                     % skipInitial = 1;
+%                 else
+%                     cond1 = 0;
+%                 end   
+               
+
+                    
                      if abs(bm - Mbatt)/Mbatt > 0.01
                         del = bm - Mbatt;
                         Mbatt = Mbatt + 0.1 * del;
@@ -715,13 +766,14 @@ for k = 1:length(grossweights)
 
     hold on
     plot(numbers, energies2, 'k')
+
     text(numbers(3)+3, energies2(3)-5, strcat(' ', num2str(findWeight), ' lbs'), 'FontSize', 13);
+   
 end 
 
  leg = legend('144 Wh/kg', '250 Wh/kg', '400 Wh/kg', 'Location', 'NW');
  title(leg, 'Battery Energy Density')
  leg.FontSize = 13;
-
 
 
 figure;
