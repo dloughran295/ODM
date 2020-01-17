@@ -439,24 +439,8 @@ for j = 1:length(Ed_sweep)
             inv_eff = 0.99; % Uranda
             mot_eff = 1 ;
             
-            if mainLoop_counter == 1
-                Pmot = Pow_max/mot_eff; % mult by motor efficiency when found 
-                Mm = Pmot/SPmot;
-                Ptotal_hover = P_hover_new;
-                Ptotal_fwd = P_hover_new;
-                PtTail_hover = 0;
-                PtTail_fwd = 0;
-                Pt_hover = 0;
-            else
-                if max([Ptotal_hover Ptotal_fwd]) == Ptotal_hover
-                    Mm_tail = PtTail_hover/SPmot;
-                    Mm_main = Pt_hover/SPmot;
-                elseif max([Ptotal_hover Ptotal_fwd]) == Ptotal_fwd
-                    Mm_tail = PtTail_fwd/SPmot;
-                    Mm_main = Pt_fwd/SPmot;
-                end
-                Mm = Mm_tail + Mm_main;
-            end
+            Pmot = Pow_max/mot_eff; % mult by motor efficiency when found 
+            Mm = Pmot/SPmot; 
             
             Pinv = Pow_max/(inv_eff*mot_eff);% determines the power of the invertor as the maximum power needed during the mission
             Minv = Pinv/SPinv;
@@ -555,8 +539,8 @@ for j = 1:length(Ed_sweep)
             W_wing = 5.66411 * fLGloc * (Wg * 0.2247/(1000 * cos(sweepAngle)))^0.847 * nz^0.39579 * (s_wing * 10.7639)^0.21754 * AR_wing^0.50016 * ((1+lambda)/tau)^0.09359 * (1-bfold)^-0.14356; % wing weight [lbs]
             
             % New empty weight
-%             We_new =  x * (W_blades + W_hub + W_tailrotor + W_fuselage + W_HT + W_VT + W_landinggear +  W_gearbox + W_rotorshaft + W_driveshaft + W_rotorbrakes + W_controls + W_wing) * 4.45 + 1.1*(W_battery + W_propulsion); % [N]
-            We_new =  x * (W_blades + W_hub + W_tailrotor + W_fuselage + W_HT + W_VT + W_landinggear + W_rotorshaft + W_rotorbrakes + W_controls + W_wing) * 4.45 + 1.1*(W_battery + W_propulsion); % [N]
+             We_new =  x * (W_blades + W_hub + W_tailrotor + W_fuselage + W_HT + W_VT + W_landinggear +  W_gearbox + W_rotorshaft + W_driveshaft + W_rotorbrakes + W_controls + W_wing) * 4.45 + 1.1*(W_battery + W_propulsion); % [N]
+%            We_new =  x * (W_blades + W_hub + W_tailrotor + W_fuselage + W_HT + W_VT + W_landinggear + W_rotorshaft + W_rotorbrakes + W_controls + W_wing) * 4.45 + 1.1*(W_battery + W_propulsion); % [N]
 
             
             Wg_new = We_new + (payload * 4.45); % new estimate of gross weight [N]

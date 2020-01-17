@@ -108,28 +108,28 @@ for j = 1:length(Ed_sweep)
 %        passengers = 1:14;
 %        speeds = [25:120]*.5144;
 %         distances = [5:58]*1609;
-%         distances = [5:63]*1609;
-       hovers = 10:10:1010;
-       hovers = 10:10:1080;
+         distances = [5:63]*1609;
+%       hovers = 10:10:1080;
+
     elseif Ed == 250
 %        passengers = 1:14;
 %        speeds = [25:120]*.5144;
         
 %         distances = [5:141]*1609;
-%         distances = [5:182]*1609;
-       hovers = 10:10:3300;
-       hovers = 10:10:3330;
+         distances = [5:182]*1609;
+%       hovers = 10:10:3300;
+
     elseif Ed ==400
 %        passengers = 1:14;
 %        speeds = [25:120]*.5144;
 %         distances = [5:257]*1609;
-%         distances = [5:332]*1609;
-       hovers = 10:10:6170;
-       hovers = 10:10:6620;
+         distances = [5:332]*1609;
+%       hovers = 10:10:6150;
+
        
     end
     
-    for i = 1:length(hovers)
+    for i = 1:length(distances)
         if01 = 0;
         if02 = 0;
         if03 = 0;
@@ -167,11 +167,11 @@ for j = 1:length(Ed_sweep)
 %         Vfwd = cruiseSpeed;
 %         cruiseTime = dist/Vfwd;
 % 
-%         dist = distances(i);
-%         cruiseTime = dist/Vfwd;
+        dist = distances(i);
+        cruiseTime = dist/Vfwd;
 
 
-         hoverTime = hovers(i);
+%         hoverTime = hovers(i);
 
         % Main Rotor Design
         
@@ -967,9 +967,9 @@ RPM = Omega * 9.549
 
 % % HOVER TIME
 figure(4)
-time1 = 10:10:1210;
-time2 = 10:10:3600;
-time3 = 10:10:6620;
+time1 = 10:10:1080;
+time2 = 10:10:3300;
+time3 = 10:10:6150;
 plot(time1, energies(1:length(time1), 1), ':r', 'LineWidth', 2)
 hold on
 plot(time2, energies(1:length(time2), 2), '--r', 'LineWidth', 2)
