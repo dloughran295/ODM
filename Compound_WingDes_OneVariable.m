@@ -55,45 +55,45 @@ flatPlateAreaData = flatPlateData(:,2); % equivalent flat plate area [ft^2]
 %% Analysis
 
 energies = [];
-% weights = [];
-% radii = [];
-% hoverpowers = [];
-% 
-% Ed_sweep = [144 250 400];
-% 
-% for j = 1:length(Ed_sweep)
-%     Ed = Ed_sweep(j);
-%     if Ed == 144
-% %        passengers = 1:10;
-% %        speeds = [25:120]*.5144;
-% %       distances = [5:58]*1609;
-% %        hovers = 10:10:1010;
-%     elseif Ed == 250
-% %        passengers = 1:10;
-% %        speeds = [25:120]*.5144;
-%         
+weights = [];
+radii = [];
+hoverpowers = [];
+
+Ed_sweep = [144 250 400];
+
+for j = 1:length(Ed_sweep)
+    Ed = Ed_sweep(j);
+    if Ed == 144
+%        passengers = 1:10;
+%        speeds = [25:120]*.5144;
+%       distances = [5:58]*1609;
+       hovers = 10:10:1010;
+    elseif Ed == 250
+%        passengers = 1:10;
+%        speeds = [25:120]*.5144;
+        
 %         distances = [5:141]*1609;
-% %        hovers = 10:10:2110;
-%     elseif Ed ==400
-% %        passengers = 1:10;
-% %        speeds = [25:120]*.5144;
-% %         distances = [5:252]*1609;
+       hovers = 10:10:2110;
+    elseif Ed ==400
+%        passengers = 1:10;
+%        speeds = [25:120]*.5144;
+%         distances = [5:252]*1609;
        hovers = 10:10:3700;
-%     end
-%     
-%     for i = 1:length(distances)
-%         
-% %          numPass = passengers(i);
-% %          payload = avgW * numPass;
-%         
-% %         cruiseSpeed = speeds(i);
-% %         Vfwd = cruiseSpeed;
-% %         cruiseTime = dist/Vfwd;
-% 
-%         dist = distances(i);
+    end
+    
+    for i = 1:length(distances)
+        
+%          numPass = passengers(i);
+%          payload = avgW * numPass;
+        
+%         cruiseSpeed = speeds(i);
+%         Vfwd = cruiseSpeed;
 %         cruiseTime = dist/Vfwd;
+
+        dist = distances(i);
+        cruiseTime = dist/Vfwd;
       
-%          hoverTime = hovers(i);
+         hoverTime = hovers(i);
 
 
 AR_wings = 1:1:12;

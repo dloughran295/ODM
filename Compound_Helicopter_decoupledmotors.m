@@ -1,6 +1,6 @@
 clc;
 clear all;
-close all;
+% close all;
 
 
 %% Inputs
@@ -108,28 +108,27 @@ for j = 1:length(Ed_sweep)
 %        passengers = 1:14;
 %        speeds = [25:120]*.5144;
 %         distances = [5:58]*1609;
-%         distances = [5:63]*1609;
-       hovers = 10:10:1010;
-       hovers = 10:10:1080;
+        distances = [5:63]*1609;
+%        hovers = 10:10:1010;
+%        hovers = 10:10:1080;
     elseif Ed == 250
 %        passengers = 1:14;
 %        speeds = [25:120]*.5144;
         
 %         distances = [5:141]*1609;
-%         distances = [5:182]*1609;
-       hovers = 10:10:3300;
-       hovers = 10:10:3330;
+        distances = [5:182]*1609;
+%        hovers = 10:10:3300;
+%        hovers = 10:10:3330;
     elseif Ed ==400
 %        passengers = 1:14;
 %        speeds = [25:120]*.5144;
 %         distances = [5:257]*1609;
-%         distances = [5:332]*1609;
-       hovers = 10:10:6170;
-       hovers = 10:10:6620;
+        distances = [5:332]*1609;
+%        hovers = 10:10:6150;
        
     end
     
-    for i = 1:length(hovers)
+    for i = 1:length(distances)
         if01 = 0;
         if02 = 0;
         if03 = 0;
@@ -167,11 +166,11 @@ for j = 1:length(Ed_sweep)
 %         Vfwd = cruiseSpeed;
 %         cruiseTime = dist/Vfwd;
 % 
-%         dist = distances(i);
-%         cruiseTime = dist/Vfwd;
+        dist = distances(i);
+        cruiseTime = dist/Vfwd;
 
 
-         hoverTime = hovers(i);
+%          hoverTime = hovers(i);
 
         % Main Rotor Design
         
@@ -830,11 +829,11 @@ for j = 1:length(Ed_sweep)
         radii(i,j) = R*3.28;
         hoverpowers(i,j) = Ptotal_hover/1000;
         
-        if hovers(i) == 2400
-            first_case = [if01 if02 if03 if04 if05 if06 if07 if08 if09 if10 if11 if12 if13 if14 if15 if16 if17 if18 if19 if20 if21 if22 if23 if24 if25 if26 if27 if28 if29];
-        elseif hovers(i) == 2600
-            second_case = [if01 if02 if03 if04 if05 if06 if07 if08 if09 if10 if11 if12 if13 if14 if15 if16 if17 if18 if19 if20 if21 if22 if23 if24 if25 if26 if27 if28 if29];
-        end
+%         if hovers(i) == 2400
+%             first_case = [if01 if02 if03 if04 if05 if06 if07 if08 if09 if10 if11 if12 if13 if14 if15 if16 if17 if18 if19 if20 if21 if22 if23 if24 if25 if26 if27 if28 if29];
+%         elseif hovers(i) == 2600
+%             second_case = [if01 if02 if03 if04 if05 if06 if07 if08 if09 if10 if11 if12 if13 if14 if15 if16 if17 if18 if19 if20 if21 if22 if23 if24 if25 if26 if27 if28 if29];
+%         end
     end
     
 end
@@ -920,25 +919,25 @@ RPM = Omega * 9.549
 % leg.FontSize = 10;
 
 % DISTANCE
-% figure(3)
-% dist1 = 5:63;
-% dist2 = 5:182;
-% dist3 = 5:332;
-% 
-% plot(dist1, energies(1:length(dist1), 1), ':r', 'LineWidth', 2)
-% hold on
-% plot(dist2, energies(1:length(dist2), 2), '--r', 'LineWidth', 2)
-% hold on
-% plot(dist3, energies(1:length(dist3), 3), 'r', 'LineWidth', 2)
+figure(3)
+dist1 = 5:63;
+dist2 = 5:182;
+dist3 = 5:332;
 
-% box off
-% set(gcf,'color','w');
-% xlabel('Distance (miles)', 'FontSize', 14)
-% ylabel('Total Energy (kWh)', 'FontSize', 14)
-% set(gca, 'linewidth', 2, 'FontSize', 12)
-% 
+plot(dist1, energies(1:length(dist1), 1), ':r', 'LineWidth', 2)
+hold on
+plot(dist2, energies(1:length(dist2), 2), '--r', 'LineWidth', 2)
+hold on
+plot(dist3, energies(1:length(dist3), 3), 'r', 'LineWidth', 2)
+
+box off
+set(gcf,'color','w');
+xlabel('Distance (miles)', 'FontSize', 14)
+ylabel('Total Energy (kWh)', 'FontSize', 14)
+set(gca, 'linewidth', 2, 'FontSize', 12)
+
 % grossweights = [3000 6000 9000 12000 15000];
-
+% 
 % for k = 1:length(grossweights)
 %     findWeight = grossweights(k);
 %     numAtWeight = interp1(weights(1:length(dist1)), dist1, findWeight);
@@ -954,86 +953,86 @@ RPM = Omega * 9.549
 %     energies2 = [energyAtNum energyAtNum2 energyAtNum3];
 % 
 %     hold on
-
+% 
 %     plot(numbers, energies2, 'k', 'LineWidth', 1.5)
 %     text(numbers(3)+3, energies2(3)-5, strcat(num2str(findWeight), ' lbs'), 'FontSize', 12);
+% 
+% 
+% end
 
+leg = legend('144 Wh/kg', '250 Wh/kg', '400 Wh/kg', 'Location', 'NW');
+title(leg, 'Battery Energy Density')
+leg.FontSize = 10;
+
+% % HOVER TIME
+% figure(4)
+% time1 = 10:10:1080;
+% time2 = 10:10:3330;
+% time3 = 10:10:6150;
+% plot(time1, energies(1:length(time1), 1), ':r', 'LineWidth', 2)
+% hold on
+% plot(time2, energies(1:length(time2), 2), '--r', 'LineWidth', 2)
+% hold on
+% plot(time3, energies(1:length(time3), 3), 'r', 'LineWidth', 2)
+% box off
+% set(gcf,'color','w');
+% xlabel('Hover Time (sec)', 'FontSize', 14)
+% ylabel('Total Energy (kWh)', 'FontSize', 14)
+% set(gca, 'linewidth', 2, 'FontSize', 12)
+% 
+% grossweights = [3000 6000 9000 12000 15000];
+% % grossweights = [6000];
+% for k = 1:length(grossweights)
+%     findWeight = grossweights(k);
+%     numAtWeight = interp1(weights(1:length(time1)), time1, findWeight);
+%     energyAtNum = interp1(time1, energies(1:length(time1)), numAtWeight);
+% 
+%     numAtWeight2 = interp1(weights(1:length(time2),2), time2, findWeight);
+%     energyAtNum2 = interp1(time2, energies(1:length(time2),2), numAtWeight2);
+% 
+%     numAtWeight3 = interp1(weights(110:length(time3),3), time3(110:end), findWeight);    
+%     energyAtNum3 = interp1(time3, energies(1:length(time3),3), numAtWeight3);
+% 
+%     numbers = [numAtWeight numAtWeight2 numAtWeight3];
+%     energies2 = [energyAtNum energyAtNum2 energyAtNum3];
+% 
+%     hold on 
+%     plot(numbers, energies2, 'r', 'LineWidth', 1.5)
+%     text(numbers(3)+100, energies2(3)-5, strcat(num2str(findWeight), ' lbs'), 'FontSize', 12);
 % 
 % end
 % 
 % leg = legend('144 Wh/kg', '250 Wh/kg', '400 Wh/kg', 'Location', 'NW');
 % title(leg, 'Battery Energy Density')
 % leg.FontSize = 10;
-
-% % HOVER TIME
-figure(4)
-time1 = 10:10:1210;
-time2 = 10:10:3600;
-time3 = 10:10:6620;
-plot(time1, energies(1:length(time1), 1), ':r', 'LineWidth', 2)
-hold on
-plot(time2, energies(1:length(time2), 2), '--r', 'LineWidth', 2)
-hold on
-plot(time3, energies(1:length(time3), 3), 'r', 'LineWidth', 2)
-box off
-set(gcf,'color','w');
-xlabel('Hover Time (sec)', 'FontSize', 14)
-ylabel('Total Energy (kWh)', 'FontSize', 14)
-set(gca, 'linewidth', 2, 'FontSize', 12)
-
-grossweights = [3000 6000 9000 12000 15000];
-% grossweights = [6000];
-for k = 1:length(grossweights)
-    findWeight = grossweights(k);
-    numAtWeight = interp1(weights(1:length(time1)), time1, findWeight);
-    energyAtNum = interp1(time1, energies(1:length(time1)), numAtWeight);
-
-    numAtWeight2 = interp1(weights(1:length(time2),2), time2, findWeight);
-    energyAtNum2 = interp1(time2, energies(1:length(time2),2), numAtWeight2);
-
-    numAtWeight3 = interp1(weights(110:length(time3),3), time3(110:end), findWeight);    
-    energyAtNum3 = interp1(time3, energies(1:length(time3),3), numAtWeight3);
-
-    numbers = [numAtWeight numAtWeight2 numAtWeight3];
-    energies2 = [energyAtNum energyAtNum2 energyAtNum3];
-
-    hold on 
-    plot(numbers, energies2, 'r', 'LineWidth', 1.5)
-    text(numbers(3)+100, energies2(3)-5, strcat(num2str(findWeight), ' lbs'), 'FontSize', 12);
-
-end
-
-leg = legend('144 Wh/kg', '250 Wh/kg', '400 Wh/kg', 'Location', 'NW');
-title(leg, 'Battery Energy Density')
-leg.FontSize = 10;
-
-
-figure;
-plot(bm_ratio(1:101,1),':k','LineWidth',2)
-hold on
-plot(bm_ratio(1:330,2),'--k','LineWidth',2)
-plot(bm_ratio(:,3),'k','LineWidth',2)
-leg = legend('144 Wh/kg', '250 Wh/kg', '400 Wh/kg', 'Location', 'NW');
-xlabel('Hover Time (sec)', 'FontSize', 17, 'FontWeight', 'bold')
-ylabel('Battery Mass Ratio', 'FontSize', 17, 'FontWeight', 'bold')
-box off
-set(gcf,'color','w');
-set(gca, 'linewidth', 2, 'FontSize', 12)
-leg.FontSize = 10;
-title(leg, 'Battery Energy Density')
-
-figure(1) 
-set(gcf, 'color', 'w')
-subplot(2,2,1), plot(hovers,energies(:,1))
-xlabel('Aspect Ratio')
-ylabel('Energy (kJ)')
-subplot(2,2,2), plot(hovers, weights(:,1))
-xlabel('Aspect Ratio')
-ylabel('Weight (lbs)')
-subplot(2,2,3), plot(hovers, radii(:,1))
-xlabel('Aspect Ratio')
-ylabel('Radius (ft)')
-subplot(2,2,4), plot(hovers, hoverpowers(:,1))
-xlabel('Aspect Ratio')
-ylabel('Hover Power (kW)')
+% 
+% 
+% figure;
+% plot(bm_ratio(1:101,1),':k','LineWidth',2)
+% hold on
+% plot(bm_ratio(1:330,2),'--k','LineWidth',2)
+% plot(bm_ratio(:,3),'k','LineWidth',2)
+% leg = legend('144 Wh/kg', '250 Wh/kg', '400 Wh/kg', 'Location', 'NW');
+% xlabel('Hover Time (sec)', 'FontSize', 17, 'FontWeight', 'bold')
+% ylabel('Battery Mass Ratio', 'FontSize', 17, 'FontWeight', 'bold')
+% box off
+% set(gcf,'color','w');
+% set(gca, 'linewidth', 2, 'FontSize', 12)
+% leg.FontSize = 10;
+% title(leg, 'Battery Energy Density')
+% 
+% figure(1) 
+% set(gcf, 'color', 'w')
+% subplot(2,2,1), plot(hovers,energies(:,1))
+% xlabel('Aspect Ratio')
+% ylabel('Energy (kJ)')
+% subplot(2,2,2), plot(hovers, weights(:,1))
+% xlabel('Aspect Ratio')
+% ylabel('Weight (lbs)')
+% subplot(2,2,3), plot(hovers, radii(:,1))
+% xlabel('Aspect Ratio')
+% ylabel('Radius (ft)')
+% subplot(2,2,4), plot(hovers, hoverpowers(:,1))
+% xlabel('Aspect Ratio')
+% ylabel('Hover Power (kW)')
 
