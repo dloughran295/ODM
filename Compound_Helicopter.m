@@ -107,18 +107,18 @@ for j = 1:length(Ed_sweep)
     if Ed == 144
 %        passengers = 1:14;
 %        speeds = [25:120]*.5144;
-        distances = [5:73]*1609;
+        distances = [5:77]*1609;
 %         hovers = 10:10:1080;
 
     elseif Ed == 250
 %        passengers = 1:14;
 %        speeds = [25:120]*.5144;
-        distances = [5:198]*1609;
+        distances = [5:206]*1609;
 %         hovers = 10:10:3330;
     elseif Ed ==400
 %        passengers = 1:14;
 %        speeds = [25:120]*.5144;
-       distances = [5:359]*1609;
+       distances = [5:370]*1609;
 %        hovers = 10:10:6150;
        
     end
@@ -797,9 +797,9 @@ RPM = Omega * 9.549
 
 % DISTANCE
 figure(3)
-dist1 = 5:73;
-dist2 = 5:198;
-dist3 = 5:359;
+dist1 = 5:77;
+dist2 = 5:206;
+dist3 = 5:370;
 
 plot(dist1, energies(1:length(dist1), 1), ':k', 'LineWidth', 2)
 hold on
