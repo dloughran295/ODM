@@ -972,4 +972,3 @@ leg.FontSize = 10;
 % subplot(2,2,4), plot(hovers, hoverpowers(:,1))
 % xlabel('Aspect Ratio')
 % ylabel('Hover Power (kW)')
-% 
