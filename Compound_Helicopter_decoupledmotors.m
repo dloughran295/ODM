@@ -1,6 +1,6 @@
 clc;
 clear all;
-% close all;
+close all;
 
 
 %% Inputs
@@ -58,44 +58,6 @@ flatPlateAreaData = flatPlateData(:,2); % equivalent flat plate area [ft^2]
 %% Analysis
 
 energies = [];
-
-% weights = [];
-% radii = [];
-% hoverpowers = [];
-% 
-% Ed_sweep = [144 250 400];
-% 
-% for j = 1:length(Ed_sweep)
-%     Ed = Ed_sweep(j);
-%     if Ed == 144
-% %        passengers = 1:10;
-% %        speeds = [25:120]*.5144;
-%         distances = [5:58]*1609;
-% %        hovers = 10:10:1010;
-%     elseif Ed == 250
-% %        passengers = 1:10;
-% %        speeds = [25:120]*.5144;
-%         
-%         distances = [5:141]*1609;
-% %        hovers = 10:10:2110;
-%     elseif Ed ==400
-% %        passengers = 1:10;
-% %        speeds = [25:120]*.5144;
-%         distances = [5:257]*1609;
-% %        hovers = 10:10:3700;
-%     end
-%     
-%     for i = 1:length(distances)
-%         
-% %          numPass = passengers(i);
-% %          payload = avgW * numPass;
-%         
-% %         cruiseSpeed = speeds(i);
-% %         Vfwd = cruiseSpeed;
-% %         cruiseTime = dist/Vfwd;
-% 
-%         dist = distances(i);
-
 weights = [];
 radii = [];
 hoverpowers = [];
@@ -107,57 +69,25 @@ for j = 1:length(Ed_sweep)
     if Ed == 144
 %        passengers = 1:14;
 %        speeds = [25:120]*.5144;
-%         distances = [5:58]*1609;
-        distances = [5:63]*1609;
-%        hovers = 10:10:1010;
-%        hovers = 10:10:1080;
+         distances = [5:74]*1609;
+%       hovers = 10:10:1120;
+
     elseif Ed == 250
 %        passengers = 1:14;
 %        speeds = [25:120]*.5144;
-        
-%         distances = [5:141]*1609;
-        distances = [5:182]*1609;
-%        hovers = 10:10:3300;
-%        hovers = 10:10:3330;
+         distances = [5:200]*1609;
+%       hovers = 10:10:3400;
+
     elseif Ed ==400
 %        passengers = 1:14;
 %        speeds = [25:120]*.5144;
-%         distances = [5:257]*1609;
-        distances = [5:332]*1609;
-%        hovers = 10:10:6150;
+         distances = [5:360]*1609;
+%       hovers = 10:20:6280;
+
        
     end
     
     for i = 1:length(distances)
-        if01 = 0;
-        if02 = 0;
-        if03 = 0;
-        if04 = 0;
-        if05 = 0;
-        if06 = 0;
-        if07 = 0;
-        if08 = 0;
-        if09 = 0;
-        if10 = 0;
-        if11 = 0;
-        if12 = 0;
-        if13 = 0;
-        if14 = 0;
-        if15 = 0;
-        if16 = 0;
-        if17 = 0;
-        if18 = 0;
-        if19 = 0;
-        if20 = 0;
-        if21 = 0;
-        if22 = 0;
-        if23 = 0;
-        if24 = 0;
-        if25 = 0;
-        if26 = 0;
-        if27 = 0;
-        if28 = 0;
-        if29 = 0;
         
 %          numPass = passengers(i);
 %          payload = avgW * numPass;
@@ -170,7 +100,7 @@ for j = 1:length(Ed_sweep)
         cruiseTime = dist/Vfwd;
 
 
-%          hoverTime = hovers(i);
+%         hoverTime = hovers(i);
 
         % Main Rotor Design
         
@@ -379,7 +309,7 @@ for j = 1:length(Ed_sweep)
             %     end
 
             AR_wing = 10; % aspect ratio of the wing (Russell and Johnson)
-            lambda = 0.8; % taper ratio of wing (Russell, Silva, Johnson, Yeo)
+            lambda = 0.5; % taper ratio of wing (Russell, Silva, Johnson, Yeo)
             e_wing = 0.8; % oswald's efficiency factor of wing (typical for propeller powered aircraft - Raymer)
             s_wing = (x_wing * Wg)/(0.5 * rho * Vfwd^2 * sqrt(pi * AR_wing * e_wing * Cdo_aircraft)); % wing area [m^2](equation from page 136 raymer)
             b_wing = sqrt(AR_wing * s_wing); % wing span [m]
@@ -500,14 +430,21 @@ for j = 1:length(Ed_sweep)
                 PtTail_hover = 0;
                 PtTail_fwd = 0;
                 Pt_hover = 0;
+                Pt_fwd = 0 ;
             else
-                if max([Ptotal_hover Ptotal_fwd]) == Ptotal_hover
-                    Mm_tail = PtTail_hover/SPmot;
+                
+                if max([Pt_hover Pt_fwd]) == Pt_hover
                     Mm_main = Pt_hover/SPmot;
-                elseif max([Ptotal_hover Ptotal_fwd]) == Ptotal_fwd
-                    Mm_tail = PtTail_fwd/SPmot;
+                elseif max([Pt_hover Pt_fwd]) == Pt_fwd
                     Mm_main = Pt_fwd/SPmot;
                 end
+                
+                if max([PtTail_hover PtTail_fwd]) == PtTail_hover
+                    Mm_tail = PtTail_hover/SPmot;
+                elseif max([PtTail_hover PtTail_fwd]) == PtTail_fwd
+                    Mm_tail = PtTail_fwd/SPmot;
+                end 
+                
                 Mm = Mm_tail + Mm_main;
             end
             
@@ -626,7 +563,7 @@ for j = 1:length(Ed_sweep)
             %     We_new = ((W_mainrotor + W_tailrotor + W_flightcontrol + W_landinggear + W_fuselage) * 4.45 + W_battery + W_propulsion); % [N]
             % Attempt 3
 %             We_new =  x * (W_blades + W_hub + W_tailrotor + W_fuselage + W_HT + W_VT + W_landinggear +  W_gearbox + W_rotorshaft + W_driveshaft + W_rotorbrakes + W_controls) * 4.45 + 1.1*(W_battery + W_propulsion); % [N]
-%             We_new =  x * (W_blades + W_hub + W_tailrotor + W_fuselage + W_HT + W_VT + W_landinggear +  W_rotorshaft + W_rotorbrakes + W_controls) * 4.45 + 1.1*(W_battery + W_propulsion); % [N]
+            We_new =  x * (W_blades + W_hub + W_tailrotor + W_fuselage + W_HT + W_VT + W_landinggear +  W_rotorshaft + W_rotorbrakes + W_controls) * 4.45 + 1.1*(W_battery + W_propulsion); % [N]
 
             
             
@@ -920,9 +857,9 @@ RPM = Omega * 9.549
 
 % DISTANCE
 figure(3)
-dist1 = 5:63;
-dist2 = 5:182;
-dist3 = 5:332;
+dist1 = 5:74;
+dist2 = 5:200;
+dist3 = 5:360;
 
 plot(dist1, energies(1:length(dist1), 1), ':r', 'LineWidth', 2)
 hold on
@@ -943,10 +880,10 @@ set(gca, 'linewidth', 2, 'FontSize', 12)
 %     numAtWeight = interp1(weights(1:length(dist1)), dist1, findWeight);
 %     energyAtNum = interp1(dist1, energies(1:length(dist1)), numAtWeight);
 % 
-%     numAtWeight2 = interp1(weights(1:length(dist2),2), dist2, findWeight);
+%     numAtWeight2 = interp1(weights(11:length(dist2),2), dist2(11:end), findWeight);
 %     energyAtNum2 = interp1(dist2, energies(1:length(dist2),2), numAtWeight2);
 % 
-%     numAtWeight3 = interp1(weights(1:length(dist3),3), dist3, findWeight);
+%     numAtWeight3 = interp1(weights(45:length(dist3),3), dist3(45:end), findWeight);
 %     energyAtNum3 = interp1(dist3, energies(1:length(dist3),3), numAtWeight3);
 % 
 %     numbers = [numAtWeight numAtWeight2 numAtWeight3];
@@ -966,9 +903,9 @@ leg.FontSize = 10;
 
 % % HOVER TIME
 % figure(4)
-% time1 = 10:10:1080;
-% time2 = 10:10:3330;
-% time3 = 10:10:6150;
+% time1 = 10:10:1120;
+% time2 = 10:10:3400;
+% time3 = 10:20:6280;
 % plot(time1, energies(1:length(time1), 1), ':r', 'LineWidth', 2)
 % hold on
 % plot(time2, energies(1:length(time2), 2), '--r', 'LineWidth', 2)
@@ -980,32 +917,32 @@ leg.FontSize = 10;
 % ylabel('Total Energy (kWh)', 'FontSize', 14)
 % set(gca, 'linewidth', 2, 'FontSize', 12)
 % 
-% grossweights = [3000 6000 9000 12000 15000];
-% % grossweights = [6000];
-% for k = 1:length(grossweights)
-%     findWeight = grossweights(k);
-%     numAtWeight = interp1(weights(1:length(time1)), time1, findWeight);
-%     energyAtNum = interp1(time1, energies(1:length(time1)), numAtWeight);
-% 
-%     numAtWeight2 = interp1(weights(1:length(time2),2), time2, findWeight);
-%     energyAtNum2 = interp1(time2, energies(1:length(time2),2), numAtWeight2);
-% 
-%     numAtWeight3 = interp1(weights(110:length(time3),3), time3(110:end), findWeight);    
-%     energyAtNum3 = interp1(time3, energies(1:length(time3),3), numAtWeight3);
-% 
-%     numbers = [numAtWeight numAtWeight2 numAtWeight3];
-%     energies2 = [energyAtNum energyAtNum2 energyAtNum3];
-% 
-%     hold on 
-%     plot(numbers, energies2, 'r', 'LineWidth', 1.5)
-%     text(numbers(3)+100, energies2(3)-5, strcat(num2str(findWeight), ' lbs'), 'FontSize', 12);
-% 
-% end
+% % grossweights = [3000 6000 9000 12000 15000];
+% % % grossweights = [6000];
+% % for k = 1:length(grossweights)
+% %     findWeight = grossweights(k);
+% %     numAtWeight = interp1(weights(1:length(time1)), time1, findWeight);
+% %     energyAtNum = interp1(time1, energies(1:length(time1)), numAtWeight);
+% % 
+% %     numAtWeight2 = interp1(weights(1:length(time2),2), time2, findWeight);
+% %     energyAtNum2 = interp1(time2, energies(1:length(time2),2), numAtWeight2);
+% % 
+% %     numAtWeight3 = interp1(weights(110:length(time3),3), time3(110:end), findWeight);    
+% %     energyAtNum3 = interp1(time3, energies(1:length(time3),3), numAtWeight3);
+% % 
+% %     numbers = [numAtWeight numAtWeight2 numAtWeight3];
+% %     energies2 = [energyAtNum energyAtNum2 energyAtNum3];
+% % 
+% %     hold on 
+% %     plot(numbers, energies2, 'r', 'LineWidth', 1.5)
+% %     text(numbers(3)+100, energies2(3)-5, strcat(num2str(findWeight), ' lbs'), 'FontSize', 12);
+% % 
+% % end
 % 
 % leg = legend('144 Wh/kg', '250 Wh/kg', '400 Wh/kg', 'Location', 'NW');
 % title(leg, 'Battery Energy Density')
 % leg.FontSize = 10;
-% 
+
 % 
 % figure;
 % plot(bm_ratio(1:101,1),':k','LineWidth',2)
@@ -1035,4 +972,4 @@ leg.FontSize = 10;
 % subplot(2,2,4), plot(hovers, hoverpowers(:,1))
 % xlabel('Aspect Ratio')
 % ylabel('Hover Power (kW)')
-
+% 
