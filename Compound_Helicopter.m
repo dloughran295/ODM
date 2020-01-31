@@ -7,9 +7,6 @@ clear all;
 
 % Mission Profile
 
-plotlambda = [];
-plotAR = [];
-plotenergies = []; 
 
 numPass = 2; % number of passengers (including pilot)
 avgW = 200; % average weight of person [lbs]
@@ -96,37 +93,37 @@ energies = [];
 % 
 %         dist = distances(i);
 
-weights = [];
-radii = [];
-hoverpowers = [];
+% weights = [];
+% radii = [];
+% hoverpowers = [];
+% 
+% Ed_sweep = [144 250 400];
 
-Ed_sweep = [144 250 400];
-
-for j = 1:length(Ed_sweep)
-    Ed = Ed_sweep(j);
-    if Ed == 144
-%        passengers = 1:14;
-%        speeds = [25:120]*.5144;
-%         distances = [5:58]*1609;
-%         distances = [5:63]*1609;
-       hovers = 10:10:1010;
-    elseif Ed == 250
-%        passengers = 1:14;
-%        speeds = [25:120]*.5144;
-        
-%         distances = [5:141]*1609;
-%         distances = [5:182]*1609;
-       hovers = 10:10:3300;
-    elseif Ed ==400
-%        passengers = 1:14;
-%        speeds = [25:120]*.5144;
-%         distances = [5:257]*1609;
-%         distances = [5:332]*1609;
-       hovers = 10:10:6170;
-       
-    end
-    
-    for i = 1:length(hovers)
+% for j = 1:length(Ed_sweep)
+%     Ed = Ed_sweep(j);
+%     if Ed == 144
+% %        passengers = 1:14;
+% %        speeds = [25:120]*.5144;
+% %         distances = [5:58]*1609;
+% %         distances = [5:63]*1609;
+% %        hovers = 10:10:1010;
+%     elseif Ed == 250
+% %        passengers = 1:14;
+% %        speeds = [25:120]*.5144;
+%         
+% %         distances = [5:141]*1609;
+% %         distances = [5:182]*1609;
+% %        hovers = 10:10:3300;
+%     elseif Ed ==400
+% %        passengers = 1:14;
+% %        speeds = [25:120]*.5144;
+% %        distances = [5:257]*1609;
+% %        distances = [5:332]*1609;
+% %        hovers = 10:10:6170;
+%        
+%     end
+%     
+%     for i = 1:length(hovers)
         
 %          numPass = passengers(i);
 %          payload = avgW * numPass;
@@ -139,7 +136,7 @@ for j = 1:length(Ed_sweep)
 %         cruiseTime = dist/Vfwd;
 
 
-         hoverTime = hovers(i);
+%          hoverTime = hovers(i);
 
         % Main Rotor Design
         
@@ -158,7 +155,6 @@ for j = 1:length(Ed_sweep)
         
         % Determine number of main rotor blades
         numBlades = 2; % number of blades (assumption - typical for lighter weight helicopters - Leishman)
-%         numBlades = 4;
         
         % Estimate Reynolds number
         R_init = (0.0011 * (Wg_init * 0.2247) + 11.496) * 0.3048; % rotor radius [m] (relation determined from data in Leishman)
@@ -204,9 +200,6 @@ for j = 1:length(Ed_sweep)
         Wg = Wg_init; % initialize gross weight [N]
         We = We_init; % initialize empty weight [N]
         P_hover = 0; % initialize power [W]
-
-        
-%         Ec = 20000; % initial guess for energy capacity [W*hr]
         
         Mbatt = 100; %kg 
         Ec = Ed * Mbatt; % initial guess for energy capacity [W*hr]
@@ -222,7 +215,6 @@ for j = 1:length(Ed_sweep)
         innerLoop_counter = 0;
         Ec_counter = 0;
         
-        % Ecs = [Ec];
         
         while cond1 == 1
             mainLoop_counter = mainLoop_counter+1;
@@ -325,16 +317,6 @@ for j = 1:length(Ed_sweep)
             end
             
             % WING DESIGN (added for compounds)
-            
-            %     if Ed ==144
-            %         AR_wing = 7;
-            %     elseif Ed == 250
-            %         AR_wing = 0.0344*dist/1609 + 0.8234;
-            %     elseif Ed == 400
-            %         AR_wing = 0.0134*dist/1609 + 0.7965;
-            %     else
-            %         AR_wing = 5;
-            %     end
 
             AR_wing = 10; % aspect ratio of the wing (Russell and Johnson)
             lambda = 0.8; % taper ratio of wing (Russell, Silva, Johnson, Yeo)
@@ -396,18 +378,14 @@ for j = 1:length(Ed_sweep)
             
             % Estimate of power required to hover (changed for compounds)
             B = 1 - sqrt(2 * Ct)/numBlades; % main rotor tip loss factor
-            %     Pi_hover = (1/B) * (T + 0.5 * rho * Vi^2 * Cd_plate * A_eff)^(1.5)/sqrt(2 * rho * A); % induced power of main rotor with tip loss (with drag of flat plate added) [W]
+           
             Pi_hover = (1/B) * (T*(1 + wingDvT/100))^(1.5)/sqrt(2 * rho * A); % changed to add download increase to thrust
-            
-            Pi_hover = (1/B) * T^(1.5)/sqrt(2 * rho * A); % induced power of main rotor with tip loss [W]
-            
             Po_hover = 0.125 * sigma * Cdo * rho * A * Vtip^3; % profile power of main rotor [W]
             P_hover_new = Pi_hover + Po_hover; % calculated total power of main rotor in hover
             
             % Estimate battery weight
             mb = Ec/Ed; % battery mass [kg]
-%             W_battery = mb * 9.81; % Weight of the battery [N]
-%             
+             
             % Power Density Calculations - Battery needs enough Power to cover highest component of Power 
              
                 if mainLoop_counter == 1 %initialize through the first iteration, until Pow_max is calculated later
@@ -463,38 +441,11 @@ for j = 1:length(Ed_sweep)
                            end 
             
                W_battery = bm * 9.81; % Weight of the battery [N]
- 
 
             
-            % Estimate motor weight
-%             Mm = P_hover_new/5200; % motor mass [kg] (assumption from Siemans motor - 260 kW/50 kg)
-%             W_propulsion = Mm * 9.81; % motor weight [N]
-            
-            % Make second gross weight estimate
-            
             % NDARC AFDD Weight Correlations
-            x = 1; % technology factor
-            
-            numRotor = 1; % number of rotors
-            vblade = 1.25; % flap natural frequency [per rev] (Johnson)
-            W_blades = 0.02606 * numRotor * numBlades^0.6592 * (R*3.28)^1.3371 * (c*3.28)^0.9959 * (Vtip*3.28)^0.6682 * vblade^2.5279; % [lbs]
-            
-            
-            % Attempt 1
-            %     W_blades1 = .2247*(0.06 * (We - W_battery) * R^0.4 * sigma^0.33); % [N]
-            %     W_hub1 = .2247*(0.0135 * (We - W-battery) * R^0.42); % [N]
-            %     W_fuselage = 0.21 * (We - W_battery); % [N]
-            %     W_controls = 0.06 * (We - W_battery); % [N]
-            %     W_electrical = 0.06 * (We - W_battery); % [N]
-            %     W_fixedequip = 0.28 * (We - W_battery); % [N]
-            
-            % Attempt 2
-            %     W_mainrotor = 1.7 * (Wg * 0.22481)^(0.342) * (R * 3.28)^1.58 * sigma^0.63; % [lbs]
-            %     W_tailrotor = 7.12 * (Wg * 0.22481/1000)^0.446 * (0.2*R*3.28)^1.62 * (2*sigma)^0.66; % [lbs]
-            %     W_flightcontrol = 0.0226 * (Wg * 0.22481)^0.712 * (Vfwd/0.5144)^0.653; % [lbs]
-            %     W_landinggear = 0.0475 * (Wg * 0.22481/1000)^0.975; % [lbs]
-            %     W_fuselage = 0.37 * (Wg * 0.22481)^0.598 * (R *3.28)^.942; % [lbs]
-            
+          
+           
             % Attempt 3 - NDARC AFDD Weight Correlations
             x = 1; % technology factor
             
@@ -551,10 +502,7 @@ for j = 1:length(Ed_sweep)
             W_controls = 2.1785 * fnbsv * (Wg * 0.2247)^0.3999 * numRotor^1.3855; % flight controls weight [lbs]
             
             
-             %     Attempt 1
-            %     We_new = W_blades + W_hub + W_fuselage + W_controls + W_electrical + W_fixedequip + W_propulsion + W_battery; % new estimate of empty weight [N]
-            % Attempt 2
-            %     We_new = ((W_mainrotor + W_tailrotor + W_flightcontrol + W_landinggear + W_fuselage) * 4.45 + W_battery + W_propulsion); % [N]
+           
             % Attempt 3
             We_new =  x * (W_blades + W_hub + W_tailrotor + W_fuselage + W_HT + W_VT + W_landinggear +  W_gearbox + W_rotorshaft + W_driveshaft + W_rotorbrakes + W_controls) * 4.45 + 1.1*(W_battery + W_propulsion); % [N]
 
@@ -577,7 +525,7 @@ for j = 1:length(Ed_sweep)
             Cp = P_hover_new/(rho * A *Vtip^3);
             
             figureMerit = Cp_ideal/Cp;
-            %     figureMerit = Pi/Pt_new; % Figure of merit
+          
             
             % If total power and gross weight have converged within 10%, adjust
             % geometry to get figure of merit above 0.7 
@@ -593,17 +541,6 @@ for j = 1:length(Ed_sweep)
                     Wg = Wg_new;
                     We = We_new;
                     powerCalc = 0;
-                    %         elseif figureMerit > 0.8
-                    %             skipInitial = 0;
-                    %             FM = 2; % second case for figure of merit adjustments
-                    %             % increase the chord length
-                    %             c_new = c + 0.01*c;
-                    %
-                    %             % Recalculate hover power/weight using adjustments
-                    %             Pt = Pt_new;
-                    %             Wg = Wg_new;
-                    %             We = We_new;
-                    %             powerCalc = 0;
 
 
                 else
@@ -630,9 +567,6 @@ for j = 1:length(Ed_sweep)
                 % Determine the parasite power required in forward flight (CHANGED for compounds)
                 EFPA = interp1(flatPlateWeightData, flatPlateAreaData, (Wg_new * 0.2247)) * 0.0929; % equivalent flat plate area [m^2] (interpolated from relation in Leishman)
                 e_span = 0.95; % span efficiency (assuming taper ratio of 0.8 and aspect ratio of 10 - Pope)
-                
-                %         Pp_fwd = 1.2*(0.5 * rho * Vfwd^3 * EFPA); % parasite power in forward flight[W] (increase by 20% - Roche)
-                %         D = (0.5 * rho * Vfwd^2 * EFPA) + (0.5 * rho * Vfwd^2 * s_wing * (Cdo_wing+Cl_wing^2/(pi*e_span*AR_wing))); % total drag: rotor + wing [N]
                 
                 Pp_fwd = (0.5 * rho * Vfwd^3 * (EFPA + s_wing*(Cdo_wing2 + Cl_wing ^ 2 / (pi * e_span * AR_wing) ) )); % parasite power in forward flight [W] (wing drag component added)
                 D = ((0.5 * rho * Vfwd^2 * EFPA) + (0.5 * rho * Vfwd^2 * s_wing * (Cdo_wing2+Cl_wing^2/(pi*e_span*AR_wing)))); % total drag: rotor + wing [N]
@@ -715,20 +649,10 @@ for j = 1:length(Ed_sweep)
                                bm = bm_Ed;
                                %powcal(i,j) = 0;
                            end
-                           bm_ratio(i,j) = bm_Ed/bm_pw;
+%                            bm_ratio(i,j) = bm_Ed/bm_pw;
 
                
                 
-                % If energy capacity used in battery weight calculations has
-                % converged, exit the outer loop
-%                 if abs(Ec_tot - Ec)/Ec > 0.01
-%                     del = Ec_tot - Ec;
-%                     Ec = Ec + 0.1 * del;
-%                    
-%                     skipInitial = 1;
-%                 else
-%                     cond1 = 0;
-%                 end
                 if abs(bm - Mbatt)/Mbatt > 0.01
                         del = bm - Mbatt;
                         Mbatt = Mbatt + 0.1 * del;
@@ -743,14 +667,14 @@ for j = 1:length(Ed_sweep)
         end
         
         
-        energies(i,j) = Ec_tot/1000;
-        weights(i,j) = Wg_new * 0.2247;
-        radii(i,j) = R*3.28;
-        hoverpowers(i,j) = Ptotal_hover/1000;
+%         energies(i,j) = Ec_tot/1000;
+%         weights(i,j) = Wg_new * 0.2247;
+%         radii(i,j) = R*3.28;
+%         hoverpowers(i,j) = Ptotal_hover/1000;
         
-    end
+%     end
     
-end
+% end
 
     
 
@@ -879,59 +803,59 @@ RPM = Omega * 9.549
 % leg.FontSize = 10;
 
 % % HOVER TIME
-figure(4)
-time1 = 10:10:1010;
-time2 = 10:10:3300;
-time3 = 10:10:6170;
-plot(time1, energies(1:length(time1), 1), ':r', 'LineWidth', 2)
-hold on
-plot(time2, energies(1:length(time2), 2), '--r', 'LineWidth', 2)
-hold on
-plot(time3, energies(1:length(time3), 3), 'r', 'LineWidth', 2)
-box off
-set(gcf,'color','w');
-xlabel('Hover Time (sec)', 'FontSize', 14)
-ylabel('Total Energy (kWh)', 'FontSize', 14)
-set(gca, 'linewidth', 2, 'FontSize', 12)
-
-grossweights = [3000 6000 9000 12000 15000];
-
-for k = 1:length(grossweights)
-    findWeight = grossweights(k);
-    numAtWeight = interp1(weights(1:length(time1)), time1, findWeight);
-    energyAtNum = interp1(time1, energies(1:length(time1)), numAtWeight);
-
-    numAtWeight2 = interp1(weights(1:length(time2),2), time2, findWeight);
-    energyAtNum2 = interp1(time2, energies(1:length(time2),2), numAtWeight2);
-
-    numAtWeight3 = interp1(weights(89:length(time3),3), time3(89:end), findWeight);    
-    energyAtNum3 = interp1(time3, energies(1:length(time3),3), numAtWeight3);
-
-    numbers = [numAtWeight numAtWeight2 numAtWeight3];
-    energies2 = [energyAtNum energyAtNum2 energyAtNum3];
-
-    hold on 
-    plot(numbers, energies2, 'r', 'LineWidth', 1.5)
-    text(numbers(3)+100, energies2(3)-5, strcat(num2str(findWeight), ' lbs'), 'FontSize', 12);
-
-end
-
-leg = legend('144 Wh/kg', '250 Wh/kg', '400 Wh/kg', 'Location', 'NW');
-title(leg, 'Battery Energy Density')
-leg.FontSize = 10;
-
-
-figure;
-plot(bm_ratio(1:101,1),':k','LineWidth',2)
-hold on
-plot(bm_ratio(1:330,2),'--k','LineWidth',2)
-plot(bm_ratio(:,3),'k','LineWidth',2)
-leg = legend('144 Wh/kg', '250 Wh/kg', '400 Wh/kg', 'Location', 'NW');
-xlabel('Hover Time (sec)', 'FontSize', 17, 'FontWeight', 'bold')
-ylabel('Battery Mass Ratio', 'FontSize', 17, 'FontWeight', 'bold')
-box off
-set(gcf,'color','w');
-set(gca, 'linewidth', 2, 'FontSize', 12)
-leg.FontSize = 10;
-title(leg, 'Battery Energy Density')
+% figure(4)
+% time1 = 10:10:1010;
+% time2 = 10:10:3300;
+% time3 = 10:10:6170;
+% plot(time1, energies(1:length(time1), 1), ':r', 'LineWidth', 2)
+% hold on
+% plot(time2, energies(1:length(time2), 2), '--r', 'LineWidth', 2)
+% hold on
+% plot(time3, energies(1:length(time3), 3), 'r', 'LineWidth', 2)
+% box off
+% set(gcf,'color','w');
+% xlabel('Hover Time (sec)', 'FontSize', 14)
+% ylabel('Total Energy (kWh)', 'FontSize', 14)
+% set(gca, 'linewidth', 2, 'FontSize', 12)
+% 
+% grossweights = [3000 6000 9000 12000 15000];
+% 
+% for k = 1:length(grossweights)
+%     findWeight = grossweights(k);
+%     numAtWeight = interp1(weights(1:length(time1)), time1, findWeight);
+%     energyAtNum = interp1(time1, energies(1:length(time1)), numAtWeight);
+% 
+%     numAtWeight2 = interp1(weights(1:length(time2),2), time2, findWeight);
+%     energyAtNum2 = interp1(time2, energies(1:length(time2),2), numAtWeight2);
+% 
+%     numAtWeight3 = interp1(weights(89:length(time3),3), time3(89:end), findWeight);    
+%     energyAtNum3 = interp1(time3, energies(1:length(time3),3), numAtWeight3);
+% 
+%     numbers = [numAtWeight numAtWeight2 numAtWeight3];
+%     energies2 = [energyAtNum energyAtNum2 energyAtNum3];
+% 
+%     hold on 
+%     plot(numbers, energies2, 'r', 'LineWidth', 1.5)
+%     text(numbers(3)+100, energies2(3)-5, strcat(num2str(findWeight), ' lbs'), 'FontSize', 12);
+% 
+% end
+% 
+% leg = legend('144 Wh/kg', '250 Wh/kg', '400 Wh/kg', 'Location', 'NW');
+% title(leg, 'Battery Energy Density')
+% leg.FontSize = 10;
+% 
+% 
+% figure;
+% plot(bm_ratio(1:101,1),':k','LineWidth',2)
+% hold on
+% plot(bm_ratio(1:330,2),'--k','LineWidth',2)
+% plot(bm_ratio(:,3),'k','LineWidth',2)
+% leg = legend('144 Wh/kg', '250 Wh/kg', '400 Wh/kg', 'Location', 'NW');
+% xlabel('Hover Time (sec)', 'FontSize', 17, 'FontWeight', 'bold')
+% ylabel('Battery Mass Ratio', 'FontSize', 17, 'FontWeight', 'bold')
+% box off
+% set(gcf,'color','w');
+% set(gca, 'linewidth', 2, 'FontSize', 12)
+% leg.FontSize = 10;
+% title(leg, 'Battery Energy Density')
 

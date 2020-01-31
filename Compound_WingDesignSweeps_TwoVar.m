@@ -32,7 +32,7 @@ climbTime = climbDist/rateClimb; % climbing time [s]
 
 reserve = 20 * 60; % reserve requirement [s] (20 min) (FAA requirements)
 
-Ed = 144; % Energy Density [W*h/kg] (144 Wh/kg Kokam LiPo battery energy density - used in Freidrich and Robertson 2015)
+Ed = 400; % Energy Density [W*h/kg] (144 Wh/kg Kokam LiPo battery energy density - used in Freidrich and Robertson 2015)
 
 %% Data Loading
 % Atmospheric Data for Interpolation based on Altitude
@@ -98,7 +98,7 @@ energies = [];
       
 %          hoverTime = hovers(i);
 
-AR_wings = [6 7 8 9 10 11 12 13 14]
+AR_wings = [6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 50]
 lambdas = [0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1]
          
 
@@ -363,7 +363,7 @@ for i = 1:length(AR_wings)
             %     Pi_hover = (1/B) * (T + 0.5 * rho * Vi^2 * Cd_plate * A_eff)^(1.5)/sqrt(2 * rho * A); % induced power of main rotor with tip loss (with drag of flat plate added) [W]
             Pi_hover = (1/B) * (T*(1 + wingDvT/100))^(1.5)/sqrt(2 * rho * A); % changed to add download increase to thrust
             
-            Pi_hover = (1/B) * T^(1.5)/sqrt(2 * rho * A); % induced power of main rotor with tip loss [W]
+            % Pi_hover = (1/B) * T^(1.5)/sqrt(2 * rho * A); % induced power of main rotor with tip loss [W]
             
             Po_hover = 0.125 * sigma * Cdo * rho * A * Vtip^3; % profile power of main rotor [W]
             P_hover_new = Pi_hover + Po_hover; % calculated total power of main rotor in hover
@@ -707,7 +707,7 @@ for i = 1:length(AR_wings)
             
         end
         
-        
+        Weight_wing(i,j) = W_wing;
         energies(i,j) = Ec_tot/1000;
         weights(i,j) = Wg_new * 0.2247;
         radii(i,j) = R*3.28;
@@ -753,6 +753,14 @@ ylabel(colorbar,'Required Mission Energy (kWh)','fontSize',12)
 xlabel('Wing Aspect Ratio')
 ylabel('Wing Taper Ratio')
 
+figure(3)
+surf(surfaceAR,surfacelambda, Weight_wing)
+set(gcf,'color','w')
+set(gca, 'linewidth',1.2,'fontsize',12)
+colorbar
+ylabel(colorbar,'Wing Weight (lbs)','fontSize',12)
+xlabel('Wing Aspect Ratio')
+ylabel('Wing Taper Ratio')
 
 %% Plots
 % % PASSENGERS
