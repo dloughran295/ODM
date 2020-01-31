@@ -1,36 +1,39 @@
 clc;
 clear all;
-% close all;
-
-
+%close all;
+ 
+ 
 %% Inputs
-
+ 
 % Mission Profile
 
-
+plotlambda = [];
+plotAR = [];
+plotenergies = []; 
+ 
 numPass = 2; % number of passengers (including pilot)
 avgW = 200; % average weight of person [lbs]
 payload = avgW * numPass; % total payload weight [lbs]
-
+ 
 dist = 25*1609; % distance [m] (25 miles)
 cruiseSpeed = 100 * .5144; % [m/s] 100 knots
 Vfwd = cruiseSpeed; % forward velocity [m/s]
 cruiseTime = dist/Vfwd; % cruise time[s]
-
+ 
 Vmaxfwd = 120 * .5144; % maximum forward velocity [m/s]
 altitude = 1000; % altitude [ft]
-
+ 
 h = 10 * 0.3048; % hover height [m]
 hoverTime = 240; % [s]
-
+ 
 climbDist = altitude * 0.3048 - h; % vertical climb/landing distance [m]
 rateClimb = 2.54; % rate of climb [m/s] (500 fpm)
 climbTime = climbDist/rateClimb; % climbing time [s]
-
+ 
 reserve = 20 * 60; % reserve requirement [s] (20 min) (FAA requirements)
-
+ 
 Ed = 144; % Energy Density [W*h/kg] (144 Wh/kg Kokam LiPo battery energy density - used in Freidrich and Robertson 2015)
-
+ 
 %% Data Loading
 % Atmospheric Data for Interpolation based on Altitude
 atmData = xlsread('atmospheredata.xlsx'); % load atmospheric data
@@ -40,104 +43,62 @@ pressure = atmData(:,3); % pressure [lb/ft^2]
 density = atmData(:,4); % density [slugs/ft^3]
 vSound = atmData(:,5); % speed of sound [ft/s]
 kinVisc = atmData(:,6); % kinematic viscosity [ft^2/s]
-
+ 
 rho = interp1(alt, density, altitude) * 515.379; % density of air [kg/m^3]
 nu = interp1(alt, kinVisc, altitude) * 0.092903; % kinematic viscosity of air [m^2/s]
-
+ 
 BLdata = xlsread('bladeloadingdata.xlsx'); % load data for blade loading vs. advance ratio
 advRatio = BLdata(:,1); % advance ratio data
 bladeLoading = BLdata(:,2); % blade loading data
-
+ 
 flatPlateData = xlsread('flatplateareadata.xlsx'); % load data for flat plate area vs. gross weight
 flatPlateWeightData = flatPlateData(:,1); % gross weight [lbs]
 flatPlateAreaData = flatPlateData(:,2); % equivalent flat plate area [ft^2]
-
+ 
 %% Analysis
-
+ 
 energies = [];
-
-% weights = [];
-% radii = [];
-% hoverpowers = [];
-% 
-% Ed_sweep = [144 250 400];
-% 
-% for j = 1:length(Ed_sweep)
-%     Ed = Ed_sweep(j);
-%     if Ed == 144
-% %        passengers = 1:10;
-% %        speeds = [25:120]*.5144;
-%         distances = [5:58]*1609;
-% %        hovers = 10:10:1010;
-%     elseif Ed == 250
-% %        passengers = 1:10;
-% %        speeds = [25:120]*.5144;
-%         
-%         distances = [5:141]*1609;
-% %        hovers = 10:10:2110;
-%     elseif Ed ==400
-% %        passengers = 1:10;
-% %        speeds = [25:120]*.5144;
-%         distances = [5:257]*1609;
-% %        hovers = 10:10:3700;
-%     end
-%     
-%     for i = 1:length(distances)
-%         
-% %          numPass = passengers(i);
-% %          payload = avgW * numPass;
-%         
-% %         cruiseSpeed = speeds(i);
-% %         Vfwd = cruiseSpeed;
-% %         cruiseTime = dist/Vfwd;
-% 
-%         dist = distances(i);
-
-% weights = [];
-% radii = [];
-% hoverpowers = [];
-% 
-% Ed_sweep = [144 250 400];
-
-% for j = 1:length(Ed_sweep)
-%     Ed = Ed_sweep(j);
-%     if Ed == 144
-% %        passengers = 1:14;
-% %        speeds = [25:120]*.5144;
-% %         distances = [5:58]*1609;
-% %         distances = [5:63]*1609;
-% %        hovers = 10:10:1010;
-%     elseif Ed == 250
-% %        passengers = 1:14;
-% %        speeds = [25:120]*.5144;
-%         
-% %         distances = [5:141]*1609;
-% %         distances = [5:182]*1609;
-% %        hovers = 10:10:3300;
-%     elseif Ed ==400
-% %        passengers = 1:14;
-% %        speeds = [25:120]*.5144;
-% %        distances = [5:257]*1609;
-% %        distances = [5:332]*1609;
-% %        hovers = 10:10:6170;
-%        
-%     end
-%     
-%     for i = 1:length(hovers)
+weights = [];
+radii = [];
+hoverpowers = [];
+ 
+Ed_sweep = [144 250 400];
+ 
+for j = 1:length(Ed_sweep)
+    Ed = Ed_sweep(j);
+    if Ed == 144
+%        passengers = 1:14;
+%        speeds = [25:120]*.5144;
+        distances = [5:78]*1609;
+%         hovers = 10:10:1180;
+ 
+    elseif Ed == 250
+%        passengers = 1:14;
+%        speeds = [25:120]*.5144;
+        distances = [5:207]*1609;
+%         hovers = 10:10:3510;
+    elseif Ed ==400
+%        passengers = 1:14;
+%        speeds = [25:120]*.5144;
+       distances = [5:371]*1609;
+%        hovers = 10:20:6460;
+       
+    end
+    
+    for i = 1:length(distances)
+ 
         
 %          numPass = passengers(i);
 %          payload = avgW * numPass;
-        
+%         
 %         cruiseSpeed = speeds(i);
 %         Vfwd = cruiseSpeed;
-%         cruiseTime = dist/Vfwd;
-% 
-%         dist = distances(i);
-%         cruiseTime = dist/Vfwd;
-
-
-%          hoverTime = hovers(i);
-
+  
+        dist = distances(i);
+        cruiseTime = dist/Vfwd;
+ 
+%           hoverTime = hovers(i);
+ 
         % Main Rotor Design
         
         % Determine initial weight estimate
@@ -194,7 +155,7 @@ energies = [];
         % for i = 1:length(energies)
         %     Ec = energies(i);
         %
-
+ 
         % START OUTER LOOP
         cond1 = 1; % conditional for when to exit loop
         Wg = Wg_init; % initialize gross weight [N]
@@ -204,7 +165,7 @@ energies = [];
         Mbatt = 100; %kg 
         Ec = Ed * Mbatt; % initial guess for energy capacity [W*hr]
         
-
+ 
         FM = 0; % used for changing variables for figure of merit adjustments
         Rflag = 0; % used for changing radius for aspect ratio adjustments
         powerCalc = 0; % used for when to move to final power calculations
@@ -220,6 +181,7 @@ energies = [];
             mainLoop_counter = mainLoop_counter+1;
             
             if skipInitial == 0
+                if01 = 1;
                 
                 % Determine rotor radius
                 R = (0.0011 * (Wg * 0.2247) + 11.496) * 0.3048; % rotor radius [m] (relation determined from data in Leishman)
@@ -232,6 +194,7 @@ energies = [];
                 A = pi * R^2; % disk area [m^2]
                 
                 if Rflag == 1
+                    if02 = 1;
                     R = R_new; % use new radius
                     Omega_max = Vmaxtip / R; % recalculate maximum angular velocity
                     A = pi * R^2;  % recalculate area
@@ -246,16 +209,19 @@ energies = [];
                     % If figure of merit is not in the right range, use updated value
                     % of rotational velocity instead
                     if FM == 1
+                        if03 = 1;
                         Omega = Omega_new;
                     end
                     
                     if R < 3 % if R is too low, increase R
+                        if04 = 1;
                         Rflag = 1; % allows radius change at the beginning of the loop
                         R_new = R + 0.01*R; % increase radius
                         R = R_new; % use new radius
                         Omega_max = Vmaxtip / R; % recalculate maximum angular velocity
                         A = pi * R^2;  % recalculate area
                     elseif R >10 % if R is too high, decrease radius
+                        if05 = 1;
                         Rflag = 1; % allows radius change at the beginning of the loop
                         R_new = R - 0.01*R; % decrease radius
                         R = R_new; % use new radius
@@ -266,8 +232,10 @@ energies = [];
                     
                     
                     if Omega < 20 % If omega is too low, increase omega
+                        if06 = 1;
                         Omega = Omega + 0.01 * Omega;
                     elseif Omega > Omega_max % if Omega is too high, decrease omega
+                        if07 = 1;
                         Omega = Omega - 0.01*Omega;
                     end
                     
@@ -286,6 +254,7 @@ energies = [];
                     % If figure of merit is not in the right range, use updated value
                     % of chord length instead
                     if FM == 2
+                        if08 = 1;
                         c = c_new;
                         sigma = c * numBlades/ (pi * R); % recalculate solidity
                         BL = Ct/sigma; % recalculate blade loading
@@ -295,8 +264,10 @@ energies = [];
                     
                     % Adjust rotational velocity/radius until aspect ratio is between 15 and 20
                     if AR >= 15 && AR <= 20 && R >=3 && R <= 10 && Omega >= 20 && Omega <=Omega_max
+                        if09 = 1;
                         cond2 = 0; % exit loop
                     elseif AR > 20
+                        if10 = 1;
                         % decrease radius and omega
                         Rflag = 1; % allows radius change at the beginning of the loop
                         R_new = R - 0.01*R; % decrease radius
@@ -306,6 +277,7 @@ energies = [];
                         
                         Omega = Omega - 0.01 * Omega;
                     elseif AR < 15
+                        if11 = 1;
                         Rflag = 1; % allows radius change at the beginning of the loop
                         R_new = R + 0.01*R; % increase radius
                         R = R_new; % use new radius
@@ -317,9 +289,8 @@ energies = [];
             end
             
             % WING DESIGN (added for compounds)
-
             AR_wing = 10; % aspect ratio of the wing (Russell and Johnson)
-            lambda = 0.8; % taper ratio of wing (Russell, Silva, Johnson, Yeo)
+            lambda = 0.5; % taper ratio of wing (Russell, Silva, Johnson, Yeo)
             e_wing = 0.8; % oswald's efficiency factor of wing (typical for propeller powered aircraft - Raymer)
             s_wing = (x_wing * Wg)/(0.5 * rho * Vfwd^2 * sqrt(pi * AR_wing * e_wing * Cdo_aircraft)); % wing area [m^2](equation from page 136 raymer)
             b_wing = sqrt(AR_wing * s_wing); % wing span [m]
@@ -335,8 +306,10 @@ energies = [];
             f_width = 6 * 0.3048; % estimate for width of fuselage (6 ft) [m]
             
             if R*2 <= b_wing
+                if12 = 1;
                 zeta1 = 0;
             else
+                if13 = 1;
                 zeta1 = R - b_wing/2;
             end
             
@@ -389,8 +362,10 @@ energies = [];
             % Power Density Calculations - Battery needs enough Power to cover highest component of Power 
              
                 if mainLoop_counter == 1 %initialize through the first iteration, until Pow_max is calculated later
+                    if14 = 1;
                     Pow_max = P_hover_new; 
                 else 
+                    if15 = 1;
                     Pow_max = Pow_max; 
                 end 
              % Estimate Motor and Invertor Weight more advanced
@@ -400,12 +375,15 @@ energies = [];
                 % if ed = 144, etc. etc. 
  
             if Ed <= 144 % this constraint will include the test cases 
+                if16 = 1;
                 SPinv = 2200; %W/kg 
                 SPmot = 2000; %W/kg 
             elseif Ed == 250
+                if17 = 1;
                 SPinv = 9000;
                 SPmot = 9000; 
             else 
+                if18 = 1;
                 SPinv = 19000;
                 SPmot = 16000; 
             end 
@@ -419,7 +397,8 @@ energies = [];
             
             inv_eff = 0.99; % Uranda
             mot_eff = 1 ;
-            Pmot = Pow_max/mot_eff; % mult by motor efficiency when found 
+            
+            Pmot = Pow_max/mot_eff; % mult by motor efficiency when found
             Mm = Pmot/SPmot;
             
             Pinv = Pow_max/(inv_eff*mot_eff);% determines the power of the invertor as the maximum power needed during the mission
@@ -435,13 +414,14 @@ energies = [];
 %                 % If energy capacity used in battery weight calculations has
 %                 % converged, exit the outer loop
                            if bm_pw > bm_Ed
+                               if19 = 1;
                                bm = bm_pw;
                            else 
+                               if20 = 1;
                                bm = bm_Ed;
                            end 
             
                W_battery = bm * 9.81; % Weight of the battery [N]
-
             
             % NDARC AFDD Weight Correlations
           
@@ -452,7 +432,7 @@ energies = [];
             numRotor = 1; % number of rotors
             vblade = 1.25; % flap natural frequency [per rev] (Johnson)
             W_blades = 0.02606 * numRotor * numBlades^0.6592 * (R*3.28)^1.3371 * (c*3.28)^0.9959 * (Vtip*3.28)^0.6682 * vblade^2.5279; % [lbs]
-
+ 
             
             vhub = 1; % flap natural freqency [per rev] (assumption)
             W_hub = 0.003722 * numRotor * numBlades^0.2807 * (R*3.28)^1.5377 * (Vtip*3.28)^0.4290 * vhub^2.1414 * (W_blades/numRotor)^0.5505; % [lbs]
@@ -504,8 +484,9 @@ energies = [];
             
            
             % Attempt 3
-            We_new =  x * (W_blades + W_hub + W_tailrotor + W_fuselage + W_HT + W_VT + W_landinggear +  W_gearbox + W_rotorshaft + W_driveshaft + W_rotorbrakes + W_controls) * 4.45 + 1.1*(W_battery + W_propulsion); % [N]
-
+             We_new =  x * (W_blades + W_hub + W_tailrotor + W_fuselage + W_HT + W_VT + W_landinggear +  W_gearbox + W_rotorshaft + W_driveshaft + W_rotorbrakes + W_controls) * 4.45 + 1.1*(W_battery + W_propulsion); % [N]
+%            We_new =  x * (W_blades + W_hub + W_tailrotor + W_fuselage + W_HT + W_VT + W_landinggear +  W_rotorshaft + W_rotorbrakes + W_controls) * 4.45 + 1.1*(W_battery + W_propulsion); % [N]
+ 
             
             
             % WING WEIGHT (added for compounds)
@@ -516,7 +497,9 @@ energies = [];
             W_wing = 5.66411 * fLGloc * (Wg * 0.2247/(1000 * cos(sweepAngle)))^0.847 * nz^0.39579 * (s_wing * 10.7639)^0.21754 * AR_wing^0.50016 * ((1+lambda)/tau)^0.09359 * (1-bfold)^-0.14356; % wing weight [lbs]
             
             % New empty weight
-            We_new =  x * (W_blades + W_hub + W_tailrotor + W_fuselage + W_HT + W_VT + W_landinggear +  W_gearbox + W_rotorshaft + W_driveshaft + W_rotorbrakes + W_controls + W_wing) * 4.45 + 1.1*(W_battery + W_propulsion); % [N]
+%             We_new =  x * (W_blades + W_hub + W_tailrotor + W_fuselage + W_HT + W_VT + W_landinggear +  W_gearbox + W_rotorshaft + W_driveshaft + W_rotorbrakes + W_controls + W_wing) * 4.45 + 1.1*(W_battery + W_propulsion); % [N]
+%             We_new =  x * (W_blades + W_hub + W_tailrotor + W_fuselage + W_HT + W_VT + W_landinggear + W_rotorshaft + W_rotorbrakes + W_controls + W_wing) * 4.45 + 1.1*(W_battery + W_propulsion); % [N]
+ 
             
             Wg_new = We_new + (payload * 4.45); % new estimate of gross weight [N]
             
@@ -530,7 +513,9 @@ energies = [];
             % If total power and gross weight have converged within 10%, adjust
             % geometry to get figure of merit above 0.7 
             if abs(P_hover_new - P_hover)/P_hover < 0.01 && abs(Wg_new - Wg)/Wg < 0.01
+                if21 = 1;
                 if figureMerit < 0.7
+                    if22 = 1;
                     FM = 1; % first case for figure of merit adjustments
                     % reduce rotational velocity
                     skipInitial = 0;
@@ -541,13 +526,13 @@ energies = [];
                     Wg = Wg_new;
                     We = We_new;
                     powerCalc = 0;
-
-
                 else
+                    if23 = 1;
                     powerCalc = 1; % move to final power calculations if power/weight have converged and figure of merit is within specifications
                     T = Wg_new; % set thrust equal to new gross weight
                 end
             else
+                if24 = 1;
                 FM = 0;
                 skipInitial = 0;
                 % Recalculate hover power using new gross weight estimate
@@ -558,6 +543,7 @@ energies = [];
             end
             
             if powerCalc == 1
+                if25 = 1;
                 
                 % Determine the power required to hover (changed for compounds - based on Pi_hover)
                 PP_OGE = 0.708 * (h/(R*2))^3 - 1.4569 * (h/(R*2))^2 + 1.3432 * (h/(R*2)) + 0.5147; % Power/Power out of ground effect
@@ -643,22 +629,24 @@ energies = [];
 %                 % If energy capacity used in battery weight calculations has
 %                 % converged, exit the outer loop
                            if bm_pw > bm_Ed
+                               if26 = 1;
                                bm = bm_pw;
                                %powcal(i,j)=1;
                            else 
+                               if27 = 1;
                                bm = bm_Ed;
                                %powcal(i,j) = 0;
                            end
 %                            bm_ratio(i,j) = bm_Ed/bm_pw;
-
                
-                
                 if abs(bm - Mbatt)/Mbatt > 0.01
+                    if28 = 1;
                         del = bm - Mbatt;
                         Mbatt = Mbatt + 0.1 * del;
                         % Ec = Ec_tot;
                         % skipInitial = 1;
                     else
+                        if29 = 1;
                         cond1 = 0;
                     end
 % 
@@ -672,14 +660,18 @@ energies = [];
 %         radii(i,j) = R*3.28;
 %         hoverpowers(i,j) = Ptotal_hover/1000;
         
-%     end
+%         if hovers(i) == 2400
+%             first_case = [if01 if02 if03 if04 if05 if06 if07 if08 if09 if10 if11 if12 if13 if14 if15 if16 if17 if18 if19 if20 if21 if22 if23 if24 if25 if26 if27 if28 if29];
+%         elseif hovers(i) == 2600
+%             second_case = [if01 if02 if03 if04 if05 if06 if07 if08 if09 if10 if11 if12 if13 if14 if15 if16 if17 if18 if19 if20 if21 if22 if23 if24 if25 if26 if27 if28 if29];
+%         end
+    end
     
-% end
-
+end
     
-
-
-
+ 
+ 
+ 
 %% Outputs
 GrossWeightLbs = Wg_new * 0.2247
 EmptyWeightLbs = We_new * 0.2247
@@ -689,8 +681,8 @@ TotalHoverPower_kW = Ptotal_hover/1000
 TotalCruisePower_kW = Ptotal_fwd/1000
 Radius_ft = R*3.28
 RPM = Omega * 9.549
-
-
+ 
+ 
 %% Plots
 % % PASSENGERS
 % figure(1)
@@ -735,8 +727,8 @@ RPM = Omega * 9.549
 % leg = legend('144 Wh/kg', '250 Wh/kg', '400 Wh/kg', 'Location', 'NW');
 % title(leg, 'Battery Energy Density')
 % leg.FontSize = 10;
-
-
+ 
+ 
 % % CRUISE SPEED
 % figure(2)
 % speed1 = 25:120;
@@ -755,96 +747,100 @@ RPM = Omega * 9.549
 % leg = legend('144 Wh/kg', '250 Wh/kg', '400 Wh/kg', 'Location', 'NW');
 % title(leg, 'Battery Energy Density')
 % leg.FontSize = 10;
-
+ 
 % DISTANCE
-% figure(3)
-% dist1 = 5:63;
-% dist2 = 5:182;
-% dist3 = 5:332;
-% 
-% plot(dist1, energies(1:length(dist1), 1), ':r', 'LineWidth', 2)
-% hold on
-% plot(dist2, energies(1:length(dist2), 2), '--r', 'LineWidth', 2)
-% hold on
-% plot(dist3, energies(1:length(dist3), 3), 'r', 'LineWidth', 2)
-
-% box off
-% set(gcf,'color','w');
-% xlabel('Distance (miles)', 'FontSize', 14)
-% ylabel('Total Energy (kWh)', 'FontSize', 14)
-% set(gca, 'linewidth', 2, 'FontSize', 12)
-% 
+figure(3)
+dist1 = 5:78;
+dist2 = 5:207;
+dist3 = 5:371;
+ 
+plot(dist1, energies(1:length(dist1), 1), ':k', 'LineWidth', 2)
+hold on
+plot(dist2, energies(1:length(dist2), 2), '--k', 'LineWidth', 2)
+hold on
+plot(dist3, energies(1:length(dist3), 3), 'k', 'LineWidth', 2)
+ 
+box off
+set(gcf,'color','w');
+xlabel('Distance (miles)', 'FontSize', 14)
+ylabel('Total Energy (kWh)', 'FontSize', 14)
+set(gca, 'linewidth', 2, 'FontSize', 12)
+%  
 % grossweights = [3000 6000 9000 12000 15000];
-
+%  
 % for k = 1:length(grossweights)
 %     findWeight = grossweights(k);
 %     numAtWeight = interp1(weights(1:length(dist1)), dist1, findWeight);
 %     energyAtNum = interp1(dist1, energies(1:length(dist1)), numAtWeight);
-% 
-%     numAtWeight2 = interp1(weights(1:length(dist2),2), dist2, findWeight);
+%  
+%     numAtWeight2 = interp1(weights(10:length(dist2),2), dist2(10:end), findWeight);
 %     energyAtNum2 = interp1(dist2, energies(1:length(dist2),2), numAtWeight2);
-% 
-%     numAtWeight3 = interp1(weights(1:length(dist3),3), dist3, findWeight);
+%  
+%     numAtWeight3 = interp1(weights(43:length(dist3),3), dist3(43:end), findWeight);
 %     energyAtNum3 = interp1(dist3, energies(1:length(dist3),3), numAtWeight3);
-% 
+%  
 %     numbers = [numAtWeight numAtWeight2 numAtWeight3];
 %     energies2 = [energyAtNum energyAtNum2 energyAtNum3];
-% 
+%  
 %     hold on
-
+%  
 %     plot(numbers, energies2, 'k', 'LineWidth', 1.5)
 %     text(numbers(3)+3, energies2(3)-5, strcat(num2str(findWeight), ' lbs'), 'FontSize', 12);
-
-% 
+%  
+%  
 % end
-% 
-% leg = legend('144 Wh/kg', '250 Wh/kg', '400 Wh/kg', 'Location', 'NW');
-% title(leg, 'Battery Energy Density')
-% leg.FontSize = 10;
-
+ 
+leg = legend('144 Wh/kg', '250 Wh/kg', '400 Wh/kg', 'Location', 'NW');
+title(leg, 'Battery Energy Density')
+leg.FontSize = 10;
+ 
 % % HOVER TIME
 % figure(4)
-% time1 = 10:10:1010;
-% time2 = 10:10:3300;
-% time3 = 10:10:6170;
-% plot(time1, energies(1:length(time1), 1), ':r', 'LineWidth', 2)
+% time1 = 10:10:1180;
+% time2 = 10:10:3510;
+% time3 = 10:20:6460;
+% plot(time1, energies(1:length(time1), 1), ':k', 'LineWidth', 2)
 % hold on
-% plot(time2, energies(1:length(time2), 2), '--r', 'LineWidth', 2)
+% plot(time2, energies(1:length(time2), 2), '--k', 'LineWidth', 2)
 % hold on
-% plot(time3, energies(1:length(time3), 3), 'r', 'LineWidth', 2)
+% plot(time3, energies(1:length(time3), 3), 'k', 'LineWidth', 2)
+% 
 % box off
 % set(gcf,'color','w');
 % xlabel('Hover Time (sec)', 'FontSize', 14)
 % ylabel('Total Energy (kWh)', 'FontSize', 14)
 % set(gca, 'linewidth', 2, 'FontSize', 12)
 % 
-% grossweights = [3000 6000 9000 12000 15000];
-% 
-% for k = 1:length(grossweights)
-%     findWeight = grossweights(k);
-%     numAtWeight = interp1(weights(1:length(time1)), time1, findWeight);
-%     energyAtNum = interp1(time1, energies(1:length(time1)), numAtWeight);
-% 
-%     numAtWeight2 = interp1(weights(1:length(time2),2), time2, findWeight);
-%     energyAtNum2 = interp1(time2, energies(1:length(time2),2), numAtWeight2);
-% 
-%     numAtWeight3 = interp1(weights(89:length(time3),3), time3(89:end), findWeight);    
-%     energyAtNum3 = interp1(time3, energies(1:length(time3),3), numAtWeight3);
-% 
-%     numbers = [numAtWeight numAtWeight2 numAtWeight3];
-%     energies2 = [energyAtNum energyAtNum2 energyAtNum3];
-% 
-%     hold on 
-%     plot(numbers, energies2, 'r', 'LineWidth', 1.5)
-%     text(numbers(3)+100, energies2(3)-5, strcat(num2str(findWeight), ' lbs'), 'FontSize', 12);
-% 
-% end
+% % grossweights = [3000 6000 9000 12000 15000];
+% % 
+% % % grossweights = [6000];
+% % 
+% % for k = 1:length(grossweights)
+% %     findWeight = grossweights(k);
+% %     numAtWeight = interp1(weights(1:length(time1)), time1, findWeight);
+% %     energyAtNum = interp1(time1, energies(1:length(time1)), numAtWeight);
+% % 
+% %     numAtWeight2 = interp1(weights(1:length(time2),2), time2, findWeight);
+% %     energyAtNum2 = interp1(time2, energies(1:length(time2),2), numAtWeight2);
+% % 
+% %     numAtWeight3 = interp1(weights(110:length(time3),3), time3(110:end), findWeight);    
+% %     energyAtNum3 = interp1(time3, energies(1:length(time3),3), numAtWeight3);
+% % 
+% %     numbers = [numAtWeight numAtWeight2 numAtWeight3];
+% %     energies2 = [energyAtNum energyAtNum2 energyAtNum3];
+% % 
+% %     hold on
+% % 
+% %     plot(numbers, energies2, 'k', 'LineWidth', 1.5)
+% %     text(numbers(3)+3, energies2(3)-5, strcat(num2str(findWeight), ' lbs'), 'FontSize', 12);
+% % 
+% % 
+% % end
 % 
 % leg = legend('144 Wh/kg', '250 Wh/kg', '400 Wh/kg', 'Location', 'NW');
 % title(leg, 'Battery Energy Density')
 % leg.FontSize = 10;
-% 
-% 
+
 % figure;
 % plot(bm_ratio(1:101,1),':k','LineWidth',2)
 % hold on
@@ -858,4 +854,20 @@ RPM = Omega * 9.549
 % set(gca, 'linewidth', 2, 'FontSize', 12)
 % leg.FontSize = 10;
 % title(leg, 'Battery Energy Density')
+
+% 
+% figure(1) 
+% set(gcf, 'color', 'w')
+% subplot(2,2,1), plot(hovers,energies(:,1))
+% xlabel('Aspect Ratio')
+% ylabel('Energy (kJ)')
+% subplot(2,2,2), plot(hovers, weights(:,1))
+% xlabel('Aspect Ratio')
+% ylabel('Weight (lbs)')
+% subplot(2,2,3), plot(hovers, radii(:,1))
+% xlabel('Aspect Ratio')
+% ylabel('Radius (ft)')
+% subplot(2,2,4), plot(hovers, hoverpowers(:,1))
+% xlabel('Aspect Ratio')
+% ylabel('Hover Power (kW)')
 
