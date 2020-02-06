@@ -6,7 +6,7 @@ clear all;
 %% Inputs
  
 % Mission Profile
- 
+
 plotlambda = [];
 plotAR = [];
 plotenergies = []; 
@@ -58,44 +58,6 @@ flatPlateAreaData = flatPlateData(:,2); % equivalent flat plate area [ft^2]
 %% Analysis
  
 energies = [];
- 
-% weights = [];
-% radii = [];
-% hoverpowers = [];
-% 
-% Ed_sweep = [144 250 400];
-% 
-% for j = 1:length(Ed_sweep)
-%     Ed = Ed_sweep(j);
-%     if Ed == 144
-% %        passengers = 1:10;
-% %        speeds = [25:120]*.5144;
-%         distances = [5:58]*1609;
-% %        hovers = 10:10:1010;
-%     elseif Ed == 250
-% %        passengers = 1:10;
-% %        speeds = [25:120]*.5144;
-%         
-%         distances = [5:141]*1609;
-% %        hovers = 10:10:2110;
-%     elseif Ed ==400
-% %        passengers = 1:10;
-% %        speeds = [25:120]*.5144;
-%         distances = [5:257]*1609;
-% %        hovers = 10:10:3700;
-%     end
-%     
-%     for i = 1:length(distances)
-%         
-% %          numPass = passengers(i);
-% %          payload = avgW * numPass;
-%         
-% %         cruiseSpeed = speeds(i);
-% %         Vfwd = cruiseSpeed;
-% %         cruiseTime = dist/Vfwd;
-% 
-%         dist = distances(i);
- 
 weights = [];
 radii = [];
 hoverpowers = [];
@@ -131,8 +93,7 @@ for j = 1:length(Ed_sweep)
 %         
 %         cruiseSpeed = speeds(i);
 %         Vfwd = cruiseSpeed;
-% %         cruiseTime = dist/Vfwd;
-%  
+  
         dist = distances(i);
         cruiseTime = dist/Vfwd;
  
@@ -200,7 +161,6 @@ for j = 1:length(Ed_sweep)
         Wg = Wg_init; % initialize gross weight [N]
         We = We_init; % initialize empty weight [N]
         P_hover = 0; % initialize power [W]
- 
         
         Mbatt = 100; %kg 
         Ec = Ed * Mbatt; % initial guess for energy capacity [W*hr]
@@ -329,7 +289,6 @@ for j = 1:length(Ed_sweep)
             end
             
             % WING DESIGN (added for compounds)
- 
             AR_wing = 10; % aspect ratio of the wing (Russell and Johnson)
             lambda = 0.5; % taper ratio of wing (Russell, Silva, Johnson, Yeo)
             e_wing = 0.8; % oswald's efficiency factor of wing (typical for propeller powered aircraft - Raymer)
@@ -463,7 +422,6 @@ for j = 1:length(Ed_sweep)
                            end 
             
                W_battery = bm * 9.81; % Weight of the battery [N]
- 
             
             % NDARC AFDD Weight Correlations
           
@@ -568,8 +526,6 @@ for j = 1:length(Ed_sweep)
                     Wg = Wg_new;
                     We = We_new;
                     powerCalc = 0;
- 
- 
                 else
                     if23 = 1;
                     powerCalc = 1; % move to final power calculations if power/weight have converged and figure of merit is within specifications
@@ -682,9 +638,7 @@ for j = 1:length(Ed_sweep)
                                %powcal(i,j) = 0;
                            end
 %                            bm_ratio(i,j) = bm_Ed/bm_pw;
- 
                
-                
                 if abs(bm - Mbatt)/Mbatt > 0.01
                     if28 = 1;
                         del = bm - Mbatt;
@@ -701,10 +655,10 @@ for j = 1:length(Ed_sweep)
         end
         
         
-        energies(i,j) = Ec_tot/1000;
-        weights(i,j) = Wg_new * 0.2247;
-        radii(i,j) = R*3.28;
-        hoverpowers(i,j) = Ptotal_hover/1000;
+%         energies(i,j) = Ec_tot/1000;
+%         weights(i,j) = Wg_new * 0.2247;
+%         radii(i,j) = R*3.28;
+%         hoverpowers(i,j) = Ptotal_hover/1000;
         
 %         if hovers(i) == 2400
 %             first_case = [if01 if02 if03 if04 if05 if06 if07 if08 if09 if10 if11 if12 if13 if14 if15 if16 if17 if18 if19 if20 if21 if22 if23 if24 if25 if26 if27 if28 if29];
@@ -714,7 +668,6 @@ for j = 1:length(Ed_sweep)
     end
     
 end
- 
     
  
  
@@ -887,8 +840,7 @@ leg.FontSize = 10;
 % leg = legend('144 Wh/kg', '250 Wh/kg', '400 Wh/kg', 'Location', 'NW');
 % title(leg, 'Battery Energy Density')
 % leg.FontSize = 10;
- 
- 
+
 % figure;
 % plot(bm_ratio(1:101,1),':k','LineWidth',2)
 % hold on
@@ -902,6 +854,7 @@ leg.FontSize = 10;
 % set(gca, 'linewidth', 2, 'FontSize', 12)
 % leg.FontSize = 10;
 % title(leg, 'Battery Energy Density')
+
 % 
 % figure(1) 
 % set(gcf, 'color', 'w')
@@ -917,3 +870,4 @@ leg.FontSize = 10;
 % subplot(2,2,4), plot(hovers, hoverpowers(:,1))
 % xlabel('Aspect Ratio')
 % ylabel('Hover Power (kW)')
+
