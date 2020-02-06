@@ -77,7 +77,7 @@ for j = 1:length(Ed_sweep)
     elseif Ed == 250
         %passengers = 1:10;
                 %speeds = [35:120]*.5144;
-       distances = [5:184]*1609; 
+       distances = [5:183]*1609; 
 %         hovers = 10:10:3820;
     elseif Ed ==400
         %passengers = 2:10;
@@ -340,14 +340,20 @@ for j = 1:length(Ed_sweep)
                 PtTail_hover = 0;
                 PtTail_fwd = 0;
                 Pt_hover = 0;
+                Pt_fwd = 0;
             else
-                if max([Ptotal_hover Ptotal_fwd]) == Ptotal_hover
-                    Mm_tail = PtTail_hover/SPmot;
+                if max([Pt_hover Pt_fwd]) == Pt_hover
                     Mm_main = Pt_hover/SPmot;
-                elseif max([Ptotal_hover Ptotal_fwd]) == Ptotal_fwd
-                    Mm_tail = PtTail_fwd/SPmot;
+                elseif max([Pt_hover Pt_fwd]) == Pt_fwd
                     Mm_main = Pt_fwd/SPmot;
                 end
+                
+                if max([PtTail_hover PtTail_fwd]) == PtTail_hover
+                    Mm_tail = PtTail_hover/SPmot;
+                elseif max([PtTail_hover PtTail_fwd]) == PtTail_fwd
+                    Mm_tail = PtTail_fwd/SPmot;
+                end
+                
                 Mm = Mm_tail + Mm_main;
             end
                     
@@ -452,7 +458,7 @@ for j = 1:length(Ed_sweep)
             fnbsv = 1; % (=1.8984 for ballistically survivable, 1 otherwise)
             W_controls = 2.1785 * fnbsv * (Wg * 0.2247)^0.3999 * numRotor^1.3855; % flight controls weight [lbs]
             
-           We_new =  x * (W_blades + W_hub + W_tailrotor + W_fuselage + W_HT + W_VT + W_landinggear + W_rotorshaft + W_rotorbrakes + W_controls) * 4.45 + 1.1*(W_battery + W_propulsion); % [N]
+            We_new =  x * (W_blades + W_hub + W_tailrotor + W_fuselage + W_HT + W_VT + W_landinggear + W_rotorshaft + W_rotorbrakes + W_controls) * 4.45 + 1.1*(W_battery + W_propulsion); % [N]
 
             Wg_new = We_new + (payload * 4.45); % new estimate of gross weight [N]
             

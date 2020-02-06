@@ -1,6 +1,6 @@
 clc;
 clear all;
-close all;
+% close all;
 
 %% Inputs
 

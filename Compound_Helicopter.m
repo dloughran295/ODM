@@ -1,8 +1,8 @@
 clc;
 clear all;
 %close all;
- 
- 
+
+
 %% Inputs
  
 % Mission Profile
