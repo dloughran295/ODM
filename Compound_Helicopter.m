@@ -374,7 +374,7 @@ for j = 1:length(Ed_sweep)
                 % motor SP - similar to how we use 144 
                 % if ed = 144, etc. etc. 
  
-            if Ed <= 144 % this constraint will include the test cases 
+            if Ed <= 144 % this constraint will include the test cases
                 if16 = 1;
                 SPinv = 2200; %W/kg 
                 SPmot = 2000; %W/kg 
@@ -382,11 +382,11 @@ for j = 1:length(Ed_sweep)
                 if17 = 1;
                 SPinv = 9000;
                 SPmot = 9000; 
-            else 
+            else
                 if18 = 1;
                 SPinv = 19000;
                 SPmot = 16000; 
-            end 
+            end
             % the power that sizes the invertor, is the power flowing into
             % the invertor, this needs to be higher than the mission power
             % due to the losses associated with imperfect efficiencies of
@@ -665,6 +665,8 @@ for j = 1:length(Ed_sweep)
 %         elseif hovers(i) == 2600
 %             second_case = [if01 if02 if03 if04 if05 if06 if07 if08 if09 if10 if11 if12 if13 if14 if15 if16 if17 if18 if19 if20 if21 if22 if23 if24 if25 if26 if27 if28 if29];
 %         end
+tailHover(i) = PtTail_hover;
+tailFwd(i) = PtTail_fwd;
     end
     
 end
