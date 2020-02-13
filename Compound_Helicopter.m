@@ -655,10 +655,10 @@ for j = 1:length(Ed_sweep)
         end
         
         
-%         energies(i,j) = Ec_tot/1000;
-%         weights(i,j) = Wg_new * 0.2247;
-%         radii(i,j) = R*3.28;
-%         hoverpowers(i,j) = Ptotal_hover/1000;
+        energies(i,j) = Ec_tot/1000;
+        weights(i,j) = Wg_new * 0.2247;
+        radii(i,j) = R*3.28;
+        hoverpowers(i,j) = Ptotal_hover/1000;
         
 %         if hovers(i) == 2400
 %             first_case = [if01 if02 if03 if04 if05 if06 if07 if08 if09 if10 if11 if12 if13 if14 if15 if16 if17 if18 if19 if20 if21 if22 if23 if24 if25 if26 if27 if28 if29];

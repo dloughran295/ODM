@@ -448,6 +448,7 @@ for j = 1:length(Ed_sweep)
                 Mm = Mm_tail + Mm_main;
             end
             
+            
             Pinv = Pow_max/(inv_eff*mot_eff);% determines the power of the invertor as the maximum power needed during the mission
             Minv = Pinv/SPinv;
       
