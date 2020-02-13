@@ -388,9 +388,11 @@ for j = 1:length(Ed_sweep)
                 if mainLoop_counter == 1 %initialize through the first iteration, until Pow_max is calculated later
                     if14 = 1;
                     Pow_max = P_hover_new; 
+                    Pow_max_tail = P_hover_new;
+                    Pow_max_main = P_hover_new;
                 else 
                     if15 = 1;
-                    Pow_max = Pow_max; 
+                    Pow_max = Pow_max;
                 end 
              % Estimate Motor and Invertor Weight more advanced
  
@@ -448,7 +450,9 @@ for j = 1:length(Ed_sweep)
                 Mm = Mm_tail + Mm_main;
             end
             
-            Pinv = Pow_max/(inv_eff*mot_eff);% determines the power of the invertor as the maximum power needed during the mission
+            Pinv = (Pow_max_main + Pow_max_tail)/(inv_eff*mot_eff);% determines the power of the invertor as the maximum power needed during the mission
+%             Pinv_main = Pow_max_main/(inv_eff*mot_eff);
+%             Pinv_tail = Pow_max_tail/(inv_eff*mot_eff);
             Minv = Pinv/SPinv;
       
             W_propulsion = (Mm + Minv) * 9.81 ; 
@@ -712,6 +716,9 @@ for j = 1:length(Ed_sweep)
                 % Ecs = [Ecs, Ec_tot];
                 
                 Pow_max = max([Pc Ptotal_hover Ptotal_fwd]); % resets the value of Pow_max 
+                Pow_max_tail = max([PtTail_hover PtTail_fwd]);
+                Pow_max_main = max([Pt_hover Pt_fwd]);
+                
                 
                 % Recalculate BM based on new energy and mass requirements
                 
@@ -771,6 +778,12 @@ for j = 1:length(Ed_sweep)
 %         elseif hovers(i) == 2600
 %             second_case = [if01 if02 if03 if04 if05 if06 if07 if08 if09 if10 if11 if12 if13 if14 if15 if16 if17 if18 if19 if20 if21 if22 if23 if24 if25 if26 if27 if28 if29];
 %         end
+tailHover(i) = PtTail_hover;
+tailFwd(i) = PtTail_fwd;
+mainHover(i,j) = Pt_hover;
+mainFwd(i,j) = Pt_fwd;
+
+
     end
     
 end
