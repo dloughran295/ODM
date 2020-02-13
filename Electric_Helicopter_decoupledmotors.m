@@ -1,6 +1,6 @@
 clc;
 clear all;
-%close all;
+% close all;
 
 %% Inputs
 
@@ -70,20 +70,20 @@ for j = 1:length(Ed_sweep)
     %payload = avgW * numPass;
     
     if Ed == 144
-         %passengers = 1:10;
-                 %speeds = [60:120]*.5144;
-%        distances = [5:69]*1609;
-         hovers = 10:10:1220;
+%         passengers = 1:10;
+%         speeds = [60:120]*.5144;
+%         distances = [5:69]*1609;
+        hovers = 10:10:1220;
     elseif Ed == 250
         %passengers = 1:10;
                 %speeds = [35:120]*.5144;
-%       distances = [5:183]*1609; 
-         hovers = 10:10:3810;
+%        distances = [5:183]*1609; 
+        hovers = 10:10:3810;
     elseif Ed ==400
         %passengers = 2:10;
                 %speeds = [25:120]*.5144;
-%        distances = [5:329]*1609;
-        hovers = 10:10:6740;
+%         distances = [5:329]*1609;
+       hovers = 10:10:6740;
     end
     
     for i = 1:length(hovers)
@@ -302,7 +302,9 @@ for j = 1:length(Ed_sweep)
              % Power Density Calculations - Battery needs enough Power to cover highest component of Power 
              
                 if mainLoop_counter == 1 %initialize through the first iteration, until Pow_max is calculated later
-                    Pow_max = P_hover_new; 
+                    Pow_max = P_hover_new;
+                    Pow_max_main = P_hover_new;
+                    Pow_max_tail = P_hover_new;
                 else 
                     Pow_max = Pow_max;
                 end 
@@ -360,7 +362,7 @@ for j = 1:length(Ed_sweep)
 %             Pmot = Pow_max/mot_eff; % mult by motor efficiency when found 
 %             Mm = Pmot/SPmot; 
             
-            Pinv = Pow_max/(inv_eff*mot_eff);% determines the power of the invertor as the maximum power needed during the mission
+            Pinv = (Pow_max_main + Pow_max_tail)/(inv_eff*mot_eff);% determines the power of the invertor as the maximum power needed during the mission
             Minv = Pinv/SPinv;
       
             W_propulsion = (Mm + Minv) * 9.81 ; 
@@ -577,6 +579,8 @@ for j = 1:length(Ed_sweep)
                 % Ecs = [Ecs, Ec_tot];
                 
                 Pow_max = max([Pc Ptotal_hover Ptotal_fwd]); % resets the value of Pow_max 
+                Pow_max_tail = max([PtTail_hover PtTail_fwd]);
+                Pow_max_main = max([Pt_hover Pt_fwd]);
                 
                 % Recalculate BM based on new energy and mass requirements
                 
@@ -633,7 +637,10 @@ for j = 1:length(Ed_sweep)
         weights(i,j) = Wg_new * 0.2247;
         radii(i,j) = R*3.28;
         hoverpowers(i,j) = Ptotal_hover/1000;
-%         
+tailHover(i) = PtTail_hover;
+tailFwd(i) = PtTail_fwd;
+mainHover(i,j) = Pt_hover;
+mainFwd(i,j) = Pt_fwd;
      end
  end
 
@@ -747,7 +754,7 @@ RPM = Omega * 9.549
 % 
 % xlabel('Distance (miles)')
 % ylabel('Total Energy (kWh)')
-% % 
+% 
 % % grossweights = [2000 3000 4000 5000];
 % % for k = 1:length(grossweights)
 % %     findWeight = grossweights(k);
@@ -769,7 +776,7 @@ RPM = Omega * 9.549
 % %     text(numbers(3)+3, energies2(3)-5, strcat(' ', num2str(findWeight), ' lbs'), 'FontSize', 13);
 % %    
 % % end 
-% % 
+
 %  leg = legend('144 Wh/kg', '250 Wh/kg', '400 Wh/kg', 'Location', 'NW');
 %  title(leg, 'Battery Energy Density')
 %  leg.FontSize = 13;
