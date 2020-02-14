@@ -1,6 +1,6 @@
 clc;
 clear all;
-%close all;
+close all;
 
 
 %% Inputs
@@ -69,19 +69,19 @@ for j = 1:length(Ed_sweep)
     if Ed == 144
 %        passengers = 1:14;
 %        speeds = [25:120]*.5144;
-        distances = [5:78]*1609;
-%         hovers = 10:10:1180;
+        distances = [5:64]*1609;
+%         hovers = 10:10:950;
  
     elseif Ed == 250
 %        passengers = 1:14;
 %        speeds = [25:120]*.5144;
-        distances = [5:207]*1609;
-%         hovers = 10:10:3510;
+        distances = [5:184]*1609;
+%         hovers = 10:10:3110;
     elseif Ed ==400
 %        passengers = 1:14;
 %        speeds = [25:120]*.5144;
-       distances = [5:371]*1609;
-%        hovers = 10:20:6460;
+       distances = [5:334]*1609;
+%        hovers = 10:20:5800;
        
     end
     
@@ -94,8 +94,8 @@ for j = 1:length(Ed_sweep)
 %         cruiseSpeed = speeds(i);
 %         Vfwd = cruiseSpeed;
   
-        dist = distances(i);
-        cruiseTime = dist/Vfwd;
+         dist = distances(i);
+         cruiseTime = dist/Vfwd;
  
 %           hoverTime = hovers(i);
  
@@ -485,8 +485,7 @@ for j = 1:length(Ed_sweep)
            
             % Attempt 3
              We_new =  x * (W_blades + W_hub + W_tailrotor + W_fuselage + W_HT + W_VT + W_landinggear +  W_gearbox + W_rotorshaft + W_driveshaft + W_rotorbrakes + W_controls) * 4.45 + 1.1*(W_battery + W_propulsion); % [N]
-%            We_new =  x * (W_blades + W_hub + W_tailrotor + W_fuselage + W_HT + W_VT + W_landinggear +  W_rotorshaft + W_rotorbrakes + W_controls) * 4.45 + 1.1*(W_battery + W_propulsion); % [N]
- 
+
             
             
             % WING WEIGHT (added for compounds)
@@ -497,9 +496,8 @@ for j = 1:length(Ed_sweep)
             W_wing = 5.66411 * fLGloc * (Wg * 0.2247/(1000 * cos(sweepAngle)))^0.847 * nz^0.39579 * (s_wing * 10.7639)^0.21754 * AR_wing^0.50016 * ((1+lambda)/tau)^0.09359 * (1-bfold)^-0.14356; % wing weight [lbs]
             
             % New empty weight
-%             We_new =  x * (W_blades + W_hub + W_tailrotor + W_fuselage + W_HT + W_VT + W_landinggear +  W_gearbox + W_rotorshaft + W_driveshaft + W_rotorbrakes + W_controls + W_wing) * 4.45 + 1.1*(W_battery + W_propulsion); % [N]
-%             We_new =  x * (W_blades + W_hub + W_tailrotor + W_fuselage + W_HT + W_VT + W_landinggear + W_rotorshaft + W_rotorbrakes + W_controls + W_wing) * 4.45 + 1.1*(W_battery + W_propulsion); % [N]
- 
+             We_new =  x * (W_blades + W_hub + W_tailrotor + W_fuselage + W_HT + W_VT + W_landinggear +  W_gearbox + W_rotorshaft + W_driveshaft + W_rotorbrakes + W_controls + W_wing) * 4.45 + 1.1*(W_battery + W_propulsion); % [N]
+
             
             Wg_new = We_new + (payload * 4.45); % new estimate of gross weight [N]
             
@@ -667,12 +665,15 @@ for j = 1:length(Ed_sweep)
 %         end
 tailHover(i) = PtTail_hover;
 tailFwd(i) = PtTail_fwd;
+
+totalWeightVectorC(i) = We_new;
+batteryWeightVectorC(i) = W_battery;
     end
     
 end
     
- 
- 
+% plot(distances,totalWeightVectorC,distances,batteryWeightVectorC);
+% legend("Total Weight DC", "Battery Weight DC", "Total Weight C", "Battery Weight C"); 
  
 %% Outputs
 GrossWeightLbs = Wg_new * 0.2247
@@ -752,9 +753,9 @@ RPM = Omega * 9.549
  
 % DISTANCE
 figure(3)
-dist1 = 5:78;
-dist2 = 5:207;
-dist3 = 5:371;
+dist1 = 5:64;
+dist2 = 5:184;
+dist3 = 5:334;
  
 plot(dist1, energies(1:length(dist1), 1), ':k', 'LineWidth', 2)
 hold on
@@ -798,9 +799,9 @@ leg.FontSize = 10;
  
 % % HOVER TIME
 % figure(4)
-% time1 = 10:10:1180;
-% time2 = 10:10:3510;
-% time3 = 10:20:6460;
+% time1 = 10:10:950;
+% time2 = 10:10:3110;
+% time3 = 10:20:5800;
 % plot(time1, energies(1:length(time1), 1), ':k', 'LineWidth', 2)
 % hold on
 % plot(time2, energies(1:length(time2), 2), '--k', 'LineWidth', 2)

@@ -76,13 +76,13 @@ for j = 1:length(Ed_sweep)
 %        passengers = 1:14;
 %        speeds = [25:120]*.5144;
          distances = [5:200]*1609;
-%       hovers = 10:10:3400;
+%       hovers = 10:10:3390;
 
     elseif Ed ==400
 %        passengers = 1:14;
 %        speeds = [25:120]*.5144;
          distances = [5:360]*1609;
-%       hovers = 10:20:6280;
+%       hovers = 10:20:6260;
 
        
     end
@@ -96,8 +96,8 @@ for j = 1:length(Ed_sweep)
 %         Vfwd = cruiseSpeed;
 %         cruiseTime = dist/Vfwd;
 % 
-        dist = distances(i);
-        cruiseTime = dist/Vfwd;
+         dist = distances(i);
+         cruiseTime = dist/Vfwd;
 
 
 %         hoverTime = hovers(i);
@@ -783,6 +783,9 @@ tailFwd(i) = PtTail_fwd;
 mainHover(i,j) = Pt_hover;
 mainFwd(i,j) = Pt_fwd;
 
+totalWeightVectorDC(i) = We_new;
+batteryWeightVectorDC(i) = W_battery;
+
 
     end
     
@@ -917,8 +920,8 @@ leg.FontSize = 10;
 % % HOVER TIME
 % figure(4)
 % time1 = 10:10:1120;
-% time2 = 10:10:3400;
-% time3 = 10:20:6280;
+% time2 = 10:10:3390;
+% time3 = 10:20:6260;
 % plot(time1, energies(1:length(time1), 1), ':r', 'LineWidth', 2)
 % hold on
 % plot(time2, energies(1:length(time2), 2), '--r', 'LineWidth', 2)
