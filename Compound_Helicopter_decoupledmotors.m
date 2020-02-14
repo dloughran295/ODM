@@ -78,13 +78,14 @@ for j = 1:length(Ed_sweep)
 %         distances = [5:200]*1609;
         hovers = 10:10:3390;
 
+
     elseif Ed ==400
 %        passengers = 1:14;
 %        speeds = [25:120]*.5144;
 %          distances = [5:360]*1609;
         hovers = 10:20:6200;
 
-       
+
     end
     
     for i = 1:length(hovers)
@@ -95,9 +96,9 @@ for j = 1:length(Ed_sweep)
 %         cruiseSpeed = speeds(i);
 %         Vfwd = cruiseSpeed;
 %         cruiseTime = dist/Vfwd;
-% 
 %         dist = distances(i);
 %         cruiseTime = dist/Vfwd;
+
 
 
         hoverTime = hovers(i);

@@ -95,10 +95,10 @@ for j = 1:length(Ed_sweep)
 %         Vfwd = cruiseSpeed;
 %         cruiseTime = dist/Vfwd;
 %         
-%           dist = distances(i);
-%           cruiseTime = dist/Vfwd;
+%          dist = distances(i);
+%          cruiseTime = dist/Vfwd;
 %          
-       hoverTime = hovers(i);
+        hoverTime = hovers(i);
         
         % HELICOPTER
         
@@ -776,7 +776,7 @@ RPM = Omega * 9.549
 % %     text(numbers(3)+3, energies2(3)-5, strcat(' ', num2str(findWeight), ' lbs'), 'FontSize', 13);
 % %    
 % % end 
-% 
+
 %  leg = legend('144 Wh/kg', '250 Wh/kg', '400 Wh/kg', 'Location', 'NW');
 %  title(leg, 'Battery Energy Density')
 %  leg.FontSize = 13;
