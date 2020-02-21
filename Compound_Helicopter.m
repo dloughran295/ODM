@@ -93,6 +93,8 @@ for j = 1:length(Ed_sweep)
 %         
 %         cruiseSpeed = speeds(i);
 %         Vfwd = cruiseSpeed;
+%         cruiseTime = dist/Vfwd;
+ 
   
         dist = distances(i);
         cruiseTime = dist/Vfwd;
@@ -497,7 +499,7 @@ for j = 1:length(Ed_sweep)
             W_wing = 5.66411 * fLGloc * (Wg * 0.2247/(1000 * cos(sweepAngle)))^0.847 * nz^0.39579 * (s_wing * 10.7639)^0.21754 * AR_wing^0.50016 * ((1+lambda)/tau)^0.09359 * (1-bfold)^-0.14356; % wing weight [lbs]
             
             % New empty weight
-%             We_new =  x * (W_blades + W_hub + W_tailrotor + W_fuselage + W_HT + W_VT + W_landinggear +  W_gearbox + W_rotorshaft + W_driveshaft + W_rotorbrakes + W_controls + W_wing) * 4.45 + 1.1*(W_battery + W_propulsion); % [N]
+            We_new =  x * (W_blades + W_hub + W_tailrotor + W_fuselage + W_HT + W_VT + W_landinggear +  W_gearbox + W_rotorshaft + W_driveshaft + W_rotorbrakes + W_controls + W_wing) * 4.45 + 1.1*(W_battery + W_propulsion); % [N]
 %             We_new =  x * (W_blades + W_hub + W_tailrotor + W_fuselage + W_HT + W_VT + W_landinggear + W_rotorshaft + W_rotorbrakes + W_controls + W_wing) * 4.45 + 1.1*(W_battery + W_propulsion); % [N]
  
             
@@ -655,10 +657,10 @@ for j = 1:length(Ed_sweep)
         end
         
         
-%         energies(i,j) = Ec_tot/1000;
-%         weights(i,j) = Wg_new * 0.2247;
-%         radii(i,j) = R*3.28;
-%         hoverpowers(i,j) = Ptotal_hover/1000;
+        energies(i,j) = Ec_tot/1000;
+        weights(i,j) = Wg_new * 0.2247;
+        radii(i,j) = R*3.28;
+        hoverpowers(i,j) = Ptotal_hover/1000;
         
 %         if hovers(i) == 2400
 %             first_case = [if01 if02 if03 if04 if05 if06 if07 if08 if09 if10 if11 if12 if13 if14 if15 if16 if17 if18 if19 if20 if21 if22 if23 if24 if25 if26 if27 if28 if29];

@@ -7,9 +7,9 @@ close all;
 
 % Mission Profile
 
-plotlambda = [];
-plotAR = [];
-plotenergies = []; 
+% plotlambda = [];
+% plotAR = [];
+% plotenergies = []; 
 
 numPass = 2; % number of passengers (including pilot)
 avgW = 200; % average weight of person [lbs]
@@ -57,34 +57,34 @@ flatPlateAreaData = flatPlateData(:,2); % equivalent flat plate area [ft^2]
 
 %% Analysis
 
-energies = [];
+% energies = [];
 % weights = [];
 % radii = [];
 % hoverpowers = [];
 % 
-% Ed_sweep = [144 250 400];
+%  Ed_sweep = [144 250 400];
 % 
 % for j = 1:length(Ed_sweep)
 %     Ed = Ed_sweep(j);
-%     if Ed == 144
+%    if Ed == 144
 % %        passengers = 1:10;
 % %        speeds = [25:120]*.5144;
-%         distances = [5:58]*1609;
+%     distances = [5:58]*1609;
 % %        hovers = 10:10:1010;
 %     elseif Ed == 250
 % %        passengers = 1:10;
 % %        speeds = [25:120]*.5144;
 %         
-%         distances = [5:141]*1609;
+%        distances = [5:141]*1609;
 % %        hovers = 10:10:2110;
-%     elseif Ed ==400
+%    elseif Ed ==400
 % %        passengers = 1:10;
 % %        speeds = [25:120]*.5144;
-%         distances = [5:257]*1609;
+%       distances = [5:257]*1609;
 % %        hovers = 10:10:3700;
-%     end
+%    end
 %     
-%     for i = 1:length(distances)
+%   for i = 1:length(distances)
 %         
 % %          numPass = passengers(i);
 % %          payload = avgW * numPass;
@@ -98,7 +98,7 @@ energies = [];
       
 %          hoverTime = hovers(i);
 
-AR_wings = [6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 50]
+AR_wings = [6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25]
 lambdas = [0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1]
          
 
@@ -299,8 +299,8 @@ for i = 1:length(AR_wings)
             
             AR_wing = AR_wings(i);
             lambda = lambdas(j);
-            % AR_wing = 10; % aspect ratio of the wing (Russell and Johnson)
-            % lambda = 0.8; % taper ratio of wing (Russell, Silva, Johnson, Yeo)
+%             AR_wing = 10; % aspect ratio of the wing (Russell and Johnson)
+%             lambda = 0.8; % taper ratio of wing (Russell, Silva, Johnson, Yeo)
 
             e_wing = 0.8; % oswald's efficiency factor of wing (typical for propeller powered aircraft - Raymer)
             s_wing = (x_wing * Wg)/(0.5 * rho * Vfwd^2 * sqrt(pi * AR_wing * e_wing * Cdo_aircraft)); % wing area [m^2](equation from page 136 raymer)
@@ -708,6 +708,7 @@ for i = 1:length(AR_wings)
         end
         
         Weight_wing(i,j) = W_wing;
+
         energies(i,j) = Ec_tot/1000;
         weights(i,j) = Wg_new * 0.2247;
         radii(i,j) = R*3.28;
@@ -719,6 +720,8 @@ for i = 1:length(AR_wings)
         
         surfacelambda(i,j) = lambda;
         surfaceAR(i,j) = AR_wing;
+        
+        grossweight(i,j) = Wg_new * 0.2247;
         
     end
     
@@ -745,7 +748,7 @@ ylabel('Wing Taper Ratio')
 zlabel('Required Mission Energy (kWh)')
 
 figure(2)
-surf(surfaceAR,surfacelambda, energies)
+surf(surfaceAR,surfacelambda,energies)
 set(gcf,'color','w')
 set(gca, 'linewidth',1.2,'fontsize',12)
 colorbar
