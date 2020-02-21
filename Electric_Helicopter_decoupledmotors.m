@@ -1,6 +1,6 @@
 clc;
 clear all;
-%close all;
+% close all;
 
 %% Inputs
 
@@ -55,50 +55,52 @@ flatPlateAreaData = flatPlateData(:,2); % equivalent flat plate area [ft^2]
 
 %% Analysis
 
-% energies = [];
-% weights = [];
-% radii = [];
-% hoverpowers = [];
-% 
-% Ed_sweep = [144 250 400];
-% % pass_sweep = [2 4 6 8];
-% 
-% for j = 1:length(Ed_sweep)
-%     Ed = Ed_sweep(j);
-% 
-%     %numPass = pass_sweep(j);
-%     %payload = avgW * numPass;
-%     
-%     if Ed == 144
-%          %passengers = 1:10;
-%                  %speeds = [60:120]*.5144;
+
+energies = [];
+weights = [];
+radii = [];
+hoverpowers = [];
+
+Ed_sweep = [144 250 400];
+% pass_sweep = [2 4 6 8];
+
+for j = 1:length(Ed_sweep)
+    Ed = Ed_sweep(j);
+
+    %numPass = pass_sweep(j);
+    %payload = avgW * numPass;
+    
+    if Ed == 144
+%         passengers = 1:10;
+%         speeds = [60:120]*.5144;
 %         distances = [5:69]*1609;
-% %         hovers = 10:10:1220;
-%     elseif Ed == 250
-%         %passengers = 1:10;
-%                 %speeds = [35:120]*.5144;
-%        distances = [5:184]*1609; 
-% %         hovers = 10:10:3820;
-%     elseif Ed ==400
-%         %passengers = 2:10;
-%                 %speeds = [25:120]*.5144;
+        hovers = 10:10:1220;
+    elseif Ed == 250
+        %passengers = 1:10;
+                %speeds = [35:120]*.5144;
+%        distances = [5:183]*1609; 
+        hovers = 10:10:3810;
+    elseif Ed ==400
+        %passengers = 2:10;
+                %speeds = [25:120]*.5144;
 %         distances = [5:329]*1609;
-% %        hovers = 10:10:6740;
-%     end
-%     
-%     for i = 1:length(distances)
+       hovers = 10:10:6740;
+    end
+    
+    for i = 1:length(hovers)
+        
+        %numPass = passengers(i);
+        %payload = avgW * numPass;
+        
+%         cruiseSpeed = speeds(i);
+%         Vfwd = cruiseSpeed;
+%         cruiseTime = dist/Vfwd;
 %         
-%         %numPass = passengers(i);
-%         %payload = avgW * numPass;
-%         
-% %         cruiseSpeed = speeds(i);
-% %         Vfwd = cruiseSpeed;
-% %         cruiseTime = dist/Vfwd;
-% %         
-%           dist = distances(i);
-%           cruiseTime = dist/Vfwd;
-% %          
-% %        hoverTime = hovers(i);
+%          dist = distances(i);
+%          cruiseTime = dist/Vfwd;
+%          
+        hoverTime = hovers(i);
+
         
         % HELICOPTER
         
@@ -302,7 +304,9 @@ flatPlateAreaData = flatPlateData(:,2); % equivalent flat plate area [ft^2]
              % Power Density Calculations - Battery needs enough Power to cover highest component of Power 
              
                 if mainLoop_counter == 1 %initialize through the first iteration, until Pow_max is calculated later
-                    Pow_max = P_hover_new; 
+                    Pow_max = P_hover_new;
+                    Pow_max_main = P_hover_new;
+                    Pow_max_tail = P_hover_new;
                 else 
                     Pow_max = Pow_max;
                 end 
@@ -340,21 +344,27 @@ flatPlateAreaData = flatPlateData(:,2); % equivalent flat plate area [ft^2]
                 PtTail_hover = 0;
                 PtTail_fwd = 0;
                 Pt_hover = 0;
+                Pt_fwd = 0;
             else
-                if max([Ptotal_hover Ptotal_fwd]) == Ptotal_hover
-                    Mm_tail = PtTail_hover/SPmot;
+                if max([Pt_hover Pt_fwd]) == Pt_hover
                     Mm_main = Pt_hover/SPmot;
-                elseif max([Ptotal_hover Ptotal_fwd]) == Ptotal_fwd
-                    Mm_tail = PtTail_fwd/SPmot;
+                elseif max([Pt_hover Pt_fwd]) == Pt_fwd
                     Mm_main = Pt_fwd/SPmot;
                 end
+                
+                if max([PtTail_hover PtTail_fwd]) == PtTail_hover
+                    Mm_tail = PtTail_hover/SPmot;
+                elseif max([PtTail_hover PtTail_fwd]) == PtTail_fwd
+                    Mm_tail = PtTail_fwd/SPmot;
+                end
+                
                 Mm = Mm_tail + Mm_main;
             end
                     
 %             Pmot = Pow_max/mot_eff; % mult by motor efficiency when found 
 %             Mm = Pmot/SPmot; 
             
-            Pinv = Pow_max/(inv_eff*mot_eff);% determines the power of the invertor as the maximum power needed during the mission
+            Pinv = (Pow_max_main + Pow_max_tail)/(inv_eff*mot_eff);% determines the power of the invertor as the maximum power needed during the mission
             Minv = Pinv/SPinv;
       
             W_propulsion = (Mm + Minv) * 9.81 ; 
@@ -452,7 +462,7 @@ flatPlateAreaData = flatPlateData(:,2); % equivalent flat plate area [ft^2]
             fnbsv = 1; % (=1.8984 for ballistically survivable, 1 otherwise)
             W_controls = 2.1785 * fnbsv * (Wg * 0.2247)^0.3999 * numRotor^1.3855; % flight controls weight [lbs]
             
-           We_new =  x * (W_blades + W_hub + W_tailrotor + W_fuselage + W_HT + W_VT + W_landinggear + W_rotorshaft + W_rotorbrakes + W_controls) * 4.45 + 1.1*(W_battery + W_propulsion); % [N]
+            We_new =  x * (W_blades + W_hub + W_tailrotor + W_fuselage + W_HT + W_VT + W_landinggear + W_rotorshaft + W_rotorbrakes + W_controls) * 4.45 + 1.1*(W_battery + W_propulsion); % [N]
 
             Wg_new = We_new + (payload * 4.45); % new estimate of gross weight [N]
             
@@ -571,6 +581,8 @@ flatPlateAreaData = flatPlateData(:,2); % equivalent flat plate area [ft^2]
                 % Ecs = [Ecs, Ec_tot];
                 
                 Pow_max = max([Pc Ptotal_hover Ptotal_fwd]); % resets the value of Pow_max 
+                Pow_max_tail = max([PtTail_hover PtTail_fwd]);
+                Pow_max_main = max([Pt_hover Pt_fwd]);
                 
                 % Recalculate BM based on new energy and mass requirements
                 
@@ -623,13 +635,18 @@ flatPlateAreaData = flatPlateData(:,2); % equivalent flat plate area [ft^2]
             
         end
 
-%         energies(i,j) = Ec_tot/1000;
-%         weights(i,j) = Wg_new * 0.2247;
-%         radii(i,j) = R*3.28;
-%         hoverpowers(i,j) = Ptotal_hover/1000;
-% %         
-%      end
-%  end
+
+        energies(i,j) = Ec_tot/1000;
+        weights(i,j) = Wg_new * 0.2247;
+        radii(i,j) = R*3.28;
+        hoverpowers(i,j) = Ptotal_hover/1000;
+tailHover(i) = PtTail_hover;
+tailFwd(i) = PtTail_fwd;
+mainHover(i,j) = Pt_hover;
+mainFwd(i,j) = Pt_fwd;
+     end
+ end
+
 
 
 
@@ -763,6 +780,7 @@ RPM = Omega * 9.549
 % %     text(numbers(3)+3, energies2(3)-5, strcat(' ', num2str(findWeight), ' lbs'), 'FontSize', 13);
 % %    
 % % end 
+
 % 
 %  leg = legend('144 Wh/kg', '250 Wh/kg', '400 Wh/kg', 'Location', 'NW');
 %  title(leg, 'Battery Energy Density')
@@ -786,46 +804,46 @@ RPM = Omega * 9.549
 
 
 % HOVER TIME
-% figure(4)
-% time1 = 10:10:1220;
-% time2 = 10:10:3820;
-% time3 = 10:10:6740;
-% plot(time1, energies(1:length(time1), 1), ':r', 'LineWidth', 2)
-% hold on
-% plot(time2, energies(1:length(time2), 2), '--r', 'LineWidth', 2)
-% hold on
-% plot(time3, energies(1:length(time3), 3), 'r', 'LineWidth', 2)
-% box off
-% set(gcf,'color','w');
-% xlabel('Hover Time (sec)', 'FontSize', 17)
-% ylabel('Total Energy (kWh)', 'FontSize', 17)
-% set(gca, 'linewidth', 2, 'FontSize', 15)
+figure(4)
+time1 = 10:10:1220;
+time2 = 10:10:3810;
+time3 = 10:10:6740;
+plot(time1, energies(1:length(time1), 1), ':r', 'LineWidth', 2)
+hold on
+plot(time2, energies(1:length(time2), 2), '--r', 'LineWidth', 2)
+hold on
+plot(time3, energies(1:length(time3), 3), 'r', 'LineWidth', 2)
+box off
+set(gcf,'color','w');
+xlabel('Hover Time (sec)', 'FontSize', 17)
+ylabel('Total Energy (kWh)', 'FontSize', 17)
+set(gca, 'linewidth', 2, 'FontSize', 15)
+
+% grossweights = [2000 3000 4000 5000];
+% grossweights = 6000;
+% for k = 1:length(grossweights)
+%     findWeight = grossweights;
+%     numAtWeight = interp1(weights(1:length(time1)), time1, findWeight);
+%     energyAtNum = interp1(time1, energies(1:length(time1)), numAtWeight);
 % 
-% % grossweights = [2000 3000 4000 5000];
-% % grossweights = 6000;
-% % for k = 1:length(grossweights)
-% %     findWeight = grossweights;
-% %     numAtWeight = interp1(weights(1:length(time1)), time1, findWeight);
-% %     energyAtNum = interp1(time1, energies(1:length(time1)), numAtWeight);
-% % 
-% %     numAtWeight2 = interp1(weights(1:length(time2),2), time2, findWeight);
-% %     energyAtNum2 = interp1(time2, energies(1:length(time2),2), numAtWeight2);
-% % 
-% %     numAtWeight3 = interp1(weights(111:length(time3),3), time3(111:end), findWeight);
-% %     energyAtNum3 = interp1(time3, energies(1:length(time3),3), numAtWeight3);
-% % 
-% %     numbers = [numAtWeight numAtWeight2 numAtWeight3];
-% %     energies2 = [energyAtNum energyAtNum2 energyAtNum3];
-% % 
-% %     hold on
-% %     plot(numbers, energies2, 'k', 'LineWidth', 1.5)
-% %     text(numbers(3)+3, energies2(3)-5, strcat(' ', num2str(findWeight), ' lbs'), 'FontSize', 13);
+%     numAtWeight2 = interp1(weights(1:length(time2),2), time2, findWeight);
+%     energyAtNum2 = interp1(time2, energies(1:length(time2),2), numAtWeight2);
 % 
-% % end
+%     numAtWeight3 = interp1(weights(111:length(time3),3), time3(111:end), findWeight);
+%     energyAtNum3 = interp1(time3, energies(1:length(time3),3), numAtWeight3);
 % 
-% leg = legend('144 Wh/kg', '250 Wh/kg', '400 Wh/kg', 'Location', 'NW');
-% title(leg, 'Battery Energy Density')
-% leg.FontSize = 13;
+%     numbers = [numAtWeight numAtWeight2 numAtWeight3];
+%     energies2 = [energyAtNum energyAtNum2 energyAtNum3];
+% 
+%     hold on
+%     plot(numbers, energies2, 'k', 'LineWidth', 1.5)
+%     text(numbers(3)+3, energies2(3)-5, strcat(' ', num2str(findWeight), ' lbs'), 'FontSize', 13);
+
+% end
+
+leg = legend('144 Wh/kg', '250 Wh/kg', '400 Wh/kg', 'Location', 'NW');
+title(leg, 'Battery Energy Density')
+leg.FontSize = 13;
 
 
 % figure(5)
