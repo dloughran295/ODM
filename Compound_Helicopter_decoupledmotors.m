@@ -451,10 +451,12 @@ for j = 1:length(Ed_sweep)
                 Mm = Mm_tail + Mm_main;
             end
             
-            Pinv = (Pow_max_main + Pow_max_tail)/(inv_eff*mot_eff);% determines the power of the invertor as the maximum power needed during the mission
-%             Pinv_main = Pow_max_main/(inv_eff*mot_eff);
-%             Pinv_tail = Pow_max_tail/(inv_eff*mot_eff);
-            Minv = Pinv/SPinv;
+%             Pinv = (Pow_max_main + Pow_max_tail)/(inv_eff*mot_eff);% determines the power of the invertor as the maximum power needed during the mission
+            Pinv_main = Pow_max_main/(inv_eff*mot_eff); % according to Professor Beal, two inverters are required to power two motors
+            Pinv_tail = Pow_max_tail/(inv_eff*mot_eff); % possibly look into different inverter/motor efficiencies for different orders of power from each motor?
+            Minv_main = Pinv_main/SPinv;
+            Minv_tail = Pinv_tail/SPinv;
+            Minv = Minv_main + Minv_tail;
       
             W_propulsion = (Mm + Minv) * 9.81 ; 
             
