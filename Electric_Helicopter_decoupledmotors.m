@@ -30,7 +30,7 @@ climbTime = climbDist/rateClimb; % climbing time [s]
 % 
 reserve = 20 * 60; % reserve requirement [s] (20 min) (FAA requirements)
 % 
-% Ed = 140.6; % Energy Density [W*h/kg] (Kokam LiPo battery energy density - used in Freidrich and Robertson 2015)
+Ed = 140.6; % Energy Density [W*h/kg] (Kokam LiPo battery energy density - used in Freidrich and Robertson 2015)
 
 %% Data Loading
 % Atmospheric Data for Interpolation based on Altitude
@@ -54,6 +54,7 @@ flatPlateWeightData = flatPlateData(:,1); % gross weight [lbs]
 flatPlateAreaData = flatPlateData(:,2); % equivalent flat plate area [ft^2]
 
 %% Analysis
+
 
 energies = [];
 weights = [];
@@ -99,6 +100,7 @@ for j = 1:length(Ed_sweep)
 %          cruiseTime = dist/Vfwd;
 %          
         hoverTime = hovers(i);
+
         
         % HELICOPTER
         
@@ -593,12 +595,12 @@ for j = 1:length(Ed_sweep)
 %                 % converged, exit the outer loop
                            if bm_pw > bm_Ed
                                bm = bm_pw;
-                               powcount(i,j) = 1 ;
+%                                powcount(i,j) = 1 ;
                            else 
                                bm = bm_Ed;
-                               powcount(i,j) = 0 ;
+%                                powcount(i,j) = 0 ;
                            end 
-                           bm_ratio(i,j) = bm_Ed/bm_pw;
+%                            bm_ratio(i,j) = bm_Ed/bm_pw;
 
          
                % If energy capacity used in battery weight calculations has
@@ -633,6 +635,7 @@ for j = 1:length(Ed_sweep)
             
         end
 
+
         energies(i,j) = Ec_tot/1000;
         weights(i,j) = Wg_new * 0.2247;
         radii(i,j) = R*3.28;
@@ -643,6 +646,7 @@ mainHover(i,j) = Pt_hover;
 mainFwd(i,j) = Pt_fwd;
      end
  end
+
 
 
 
@@ -777,6 +781,7 @@ RPM = Omega * 9.549
 % %    
 % % end 
 
+% 
 %  leg = legend('144 Wh/kg', '250 Wh/kg', '400 Wh/kg', 'Location', 'NW');
 %  title(leg, 'Battery Energy Density')
 %  leg.FontSize = 13;
