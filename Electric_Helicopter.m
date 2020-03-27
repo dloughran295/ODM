@@ -135,7 +135,6 @@ for j = 1:length(Ed_sweep)
             hoverTime = hovers(i);
         end
         
-        
         % HELICOPTER
         
         % Following process from: Guide for Conceptual Helicopter Design (Kee)
@@ -742,23 +741,6 @@ set(gca, 'linewidth', 2, 'FontSize', 16)
  title(leg, 'Battery Energy Density')
  leg.FontSize = 13;
 
-% 
-% 
-% figure;
-% plot(bm_ratio(1:33,1),':k','LineWidth',2)
-% hold on
-% plot(bm_ratio(1:100,2),'--k','LineWidth',2)
-% plot(bm_ratio(:,3),'k','LineWidth',2)
-% leg = legend('144 Wh/kg', '250 Wh/kg', '400 Wh/kg', 'Location', 'NW');
-% xlabel('Distance (miles)', 'FontSize', 17, 'FontWeight', 'bold')
-% ylabel('Battery Mass Ratio', 'FontSize', 17, 'FontWeight', 'bold')
-% box off
-% set(gcf,'color','w');
-% set(gca, 'linewidth', 2, 'FontSize', 12)
-% leg.FontSize = 10;
-% title(leg, 'Battery Energy Density')
-
-
 
 % HOVER TIME
 elseif strcmp(sweep,'hovers')
@@ -802,7 +784,26 @@ set(gca, 'linewidth', 2, 'FontSize', 16)
 leg = legend('144 Wh/kg', '250 Wh/kg', '400 Wh/kg', 'Location', 'NW');
 title(leg, 'Battery Energy Density')
 leg.FontSize = 13;
+
 end
+
+
+
+% 
+% 
+% figure;
+% plot(bm_ratio(1:33,1),':k','LineWidth',2)
+% hold on
+% plot(bm_ratio(1:100,2),'--k','LineWidth',2)
+% plot(bm_ratio(:,3),'k','LineWidth',2)
+% leg = legend('144 Wh/kg', '250 Wh/kg', '400 Wh/kg', 'Location', 'NW');
+% xlabel('Distance (miles)', 'FontSize', 17, 'FontWeight', 'bold')
+% ylabel('Battery Mass Ratio', 'FontSize', 17, 'FontWeight', 'bold')
+% box off
+% set(gcf,'color','w');
+% set(gca, 'linewidth', 2, 'FontSize', 12)
+% leg.FontSize = 10;
+% title(leg, 'Battery Energy Density')
 
 % figure(5)
 % plot(distances/1609, energies(:,1), 'k', 'LineWidth', 2)

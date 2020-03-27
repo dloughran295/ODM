@@ -1,6 +1,6 @@
 clc;
 clear all;
-% close all;
+%close all;
 
 %% Inputs
 
@@ -64,7 +64,7 @@ hoverpowers = [];
 Ed_sweep = [144 250 400];
 % pass_sweep = [2 4 6 8];
 
-sweep = 'distances';  %Options are 'passengers', 'speeds', 'distances', and 'hovers' 
+sweep = 'passengers';  %Options are 'passengers', 'speeds', 'distances', and 'hovers' 
                       %Make sure the variable "sweep" is a string with one of those exact
                       %spellings (no caps) for code to work.
 
@@ -119,12 +119,6 @@ for j = 1:length(Ed_sweep)
             missionRange = hovers;
         end
     end
-    
-    
-    
-    
-    
-    
     
     
     for i = 1:length(missionRange)
@@ -801,6 +795,7 @@ xlabel('Distance (miles)', 'FontSize', 16)
 ylabel('Total Energy (kWh)', 'FontSize', 16)
 set(gca, 'linewidth', 2, 'FontSize', 16)
 
+
 % grossweights = [2000 3000 4000 5000];
 % for k = 1:length(grossweights)
 %     findWeight = grossweights(k);
@@ -823,13 +818,9 @@ set(gca, 'linewidth', 2, 'FontSize', 16)
 %    
 % end 
 
-
  leg = legend('144 Wh/kg', '250 Wh/kg', '400 Wh/kg', 'Location', 'NW');
  title(leg, 'Battery Energy Density')
  leg.FontSize = 13;
-
-
-
 
 
 % HOVER TIME
@@ -858,7 +849,7 @@ set(gca, 'linewidth', 2, 'FontSize', 16)
 % 
 %     numAtWeight2 = interp1(weights(1:length(time2),2), time2, findWeight);
 %     energyAtNum2 = interp1(time2, energies(1:length(time2),2), numAtWeight2);
-% 
+%
 %     numAtWeight3 = interp1(weights(111:length(time3),3), time3(111:end), findWeight);
 %     energyAtNum3 = interp1(time3, energies(1:length(time3),3), numAtWeight3);
 % 
@@ -868,7 +859,6 @@ set(gca, 'linewidth', 2, 'FontSize', 16)
 %     hold on
 %     plot(numbers, energies2, 'k', 'LineWidth', 1.5)
 %     text(numbers(3)+3, energies2(3)-5, strcat(' ', num2str(findWeight), ' lbs'), 'FontSize', 13);
-% 
 % end
 
 leg = legend('144 Wh/kg', '250 Wh/kg', '400 Wh/kg', 'Location', 'NW');
