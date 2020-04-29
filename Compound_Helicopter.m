@@ -61,12 +61,15 @@ energies = [];
 weights = [];
 radii = [];
 hoverpowers = [];
+
  
 Ed_sweep = [144 250 400];
 
-sweep = 'distances';  %Options are 'passengers', 'speeds', 'distances', and 'hovers' 
+% ************* THIS VARIABLE IS ALL YOU HAVE TO CHANGE FOR A SWEEP (other than changing the bounds for the sweep) **********************************
+sweep = 'passengers';  %Options are 'passengers', 'speeds', 'distances', and 'hovers' 
                       %Make sure the variable "sweep" is a string with one of those exact
                       %spellings (no caps) for code to work.
+% ***************************************************************************************************
  
 for j = 1:length(Ed_sweep)
     Ed = Ed_sweep(j);
@@ -131,7 +134,7 @@ for j = 1:length(Ed_sweep)
         elseif strcmp(sweep,'hovers')
             hoverTime = hovers(i);
         end
- 
+  
         % Main Rotor Design
         
         % Determine initial weight estimate
@@ -173,7 +176,7 @@ for j = 1:length(Ed_sweep)
         
         
         % WING PARAMETERS (added for compounds)
-        x_wing = 0.6; % percent of weight the wing lifts in cruise 
+        x_wing = 0.75; % percent of weight the wing lifts in cruise 
         Cdo_aircraft = 0.03; % zero-lift drag coefficient of aircraft (dirty fixed gear prop aircraft - Raymer)
         Cdo_wing2 = 0.005; % zero-lift drag coeff of the wing (Assuming NACA 0009 and Re = 3m - Schlicting)
         
@@ -188,7 +191,7 @@ for j = 1:length(Ed_sweep)
         % for i = 1:length(energies)
         %     Ec = energies(i);
         %
- 
+        
         % START OUTER LOOP
         cond1 = 1; % conditional for when to exit loop
         Wg = Wg_init; % initialize gross weight [N]
@@ -322,7 +325,7 @@ for j = 1:length(Ed_sweep)
             end
             
             % WING DESIGN (added for compounds)
-            AR_wing = 10; % aspect ratio of the wing (Russell and Johnson)
+            AR_wing = 30; % aspect ratio of the wing (Russell and Johnson)
             lambda = 0.5; % taper ratio of wing (Russell, Silva, Johnson, Yeo)
             e_wing = 0.8; % oswald's efficiency factor of wing (typical for propeller powered aircraft - Raymer)
             s_wing = (x_wing * Wg)/(0.5 * rho * Vfwd^2 * sqrt(pi * AR_wing * e_wing * Cdo_aircraft)); % wing area [m^2](equation from page 136 raymer)
@@ -688,10 +691,10 @@ for j = 1:length(Ed_sweep)
         end
         
         
-        energies(i,j) = Ec_tot/1000;
-        weights(i,j) = Wg_new * 0.2247;
-        radii(i,j) = R*3.28;
-        hoverpowers(i,j) = Ptotal_hover/1000;
+         energies(i,j) = Ec_tot/1000;
+         weights(i,j) = Wg_new * 0.2247;
+         radii(i,j) = R*3.28;
+         hoverpowers(i,j) = Ptotal_hover/1000;
         
 %         if hovers(i) == 2400
 %             first_case = [if01 if02 if03 if04 if05 if06 if07 if08 if09 if10 if11 if12 if13 if14 if15 if16 if17 if18 if19 if20 if21 if22 if23 if24 if25 if26 if27 if28 if29];
@@ -705,7 +708,7 @@ We_new_vector(i,j) = We_new;
 W_battery_vector(i,j) = W_battery;
 W_propulsion_vector(i,j) = W_propulsion;
     end
-end
+ end  
     
 % plot(distances,totalWeightVectorC,distances,batteryWeightVectorC);
 % legend("Total Weight DC", "Battery Weight DC", "Total Weight C", "Battery Weight C"); 
@@ -787,7 +790,6 @@ set(gca, 'linewidth', 2, 'FontSize', 12)
 leg = legend('144 Wh/kg', '250 Wh/kg', '400 Wh/kg', 'Location', 'NW');
 title(leg, 'Battery Energy Density')
 leg.FontSize = 10;
- 
 
 % DISTANCE
 elseif strcmp(sweep,'distances')
@@ -843,6 +845,7 @@ figure(4)
 time1 = 10:10:950;
 time2 = 10:10:3110;
 time3 = 10:20:5800;
+
 plot(time1, energies(1:length(time1), 1), ':k', 'LineWidth', 2)
 hold on
 plot(time2, energies(1:length(time2), 2), '--k', 'LineWidth', 2)
@@ -884,7 +887,6 @@ set(gca, 'linewidth', 2, 'FontSize', 12)
 leg = legend('144 Wh/kg', '250 Wh/kg', '400 Wh/kg', 'Location', 'NW');
 title(leg, 'Battery Energy Density')
 leg.FontSize = 10;
-
 
 end
 

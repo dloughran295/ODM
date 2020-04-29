@@ -1,9 +1,9 @@
 clc;
 clear all;
-close all;
+%close all;
 
 
-%% Inputs
+%% Inputsgit 
 
 % Mission Profile
 
@@ -64,16 +64,18 @@ hoverpowers = [];
 
 Ed_sweep = [144 250 400];
 
-sweep = 'distances';  %Options are 'passengers', 'speeds', 'distances', and 'hovers' 
+% ************* THIS VARIABLE IS ALL YOU HAVE TO CHANGE FOR A SWEEP (other than changing the bounds for the sweep) **********************************
+sweep = 'passengers';  %Options are 'passengers', 'speeds', 'distances', and 'hovers' 
                       %Make sure the variable "sweep" is a string with one of those exact
                       %spellings (no caps) for code to work.
-
+% ***************************************************************************************************
+                      
 for j = 1:length(Ed_sweep)
     Ed = Ed_sweep(j);
 
     if Ed == 144
         if strcmp(sweep,'passengers')
-            passengers = 1:10;
+            passengers = 1:9;
             missionRange = passengers;
         elseif strcmp(sweep,'speeds')
             speeds = [30:120]*.5144;
@@ -97,7 +99,7 @@ for j = 1:length(Ed_sweep)
             distances = [5:200]*1609; 
             missionRange = distances;
         elseif strcmp(sweep,'hovers')
-            hovers = 10:10:3390;
+            hovers = 10:10:3340;
             missionRange = hovers;
         end
         
@@ -175,7 +177,7 @@ for j = 1:length(Ed_sweep)
         
         
         % WING PARAMETERS (added for compounds)
-        x_wing = 0.6; % percent of weight the wing lifts in cruise 
+        x_wing = 0.75; % percent of weight the wing lifts in cruise 
         Cdo_aircraft = 0.03; % zero-lift drag coefficient of aircraft (dirty fixed gear prop aircraft - Raymer)
         Cdo_wing2 = 0.005; % zero-lift drag coeff of the wing (Assuming NACA 0009 and Re = 3m - Schlicting)
         
@@ -339,7 +341,7 @@ for j = 1:length(Ed_sweep)
             %         AR_wing = 5;
             %     end
 
-            AR_wing = 10; % aspect ratio of the wing (Russell and Johnson)
+            AR_wing = 30; % aspect ratio of the wing (Russell and Johnson)
             lambda = 0.5; % taper ratio of wing (Russell, Silva, Johnson, Yeo)
             e_wing = 0.8; % oswald's efficiency factor of wing (typical for propeller powered aircraft - Raymer)
             s_wing = (x_wing * Wg)/(0.5 * rho * Vfwd^2 * sqrt(pi * AR_wing * e_wing * Cdo_aircraft)); % wing area [m^2](equation from page 136 raymer)
@@ -494,7 +496,7 @@ for j = 1:length(Ed_sweep)
             Pow_dens = 3 * Ed; % W/kg
             bm_Ed = mb;
             
-            bm_pw = Pinv/Pow_dens;
+            bm_pw = (Pinv_main + Pinv_tail)/Pow_dens;
                 
 %                 % If energy capacity used in battery weight calculations has
 %                 % converged, exit the outer loop
@@ -759,7 +761,7 @@ for j = 1:length(Ed_sweep)
                 bm_Ed = Ec_tot/Ed; % battery mass [kg] 
 %             
              % Power Density Calculations - Battery needs enough Power to cover highest component of Power 
-                bm_pw = Pinv/Pow_dens;
+                 bm_pw = (Pinv_main + Pinv_tail)/Pow_dens;
                 
 %                 % If energy capacity used in battery weight calculations has
 %                 % converged, exit the outer loop
@@ -843,7 +845,7 @@ RPM = Omega * 9.549
 % PASSENGERS
 if strcmp(sweep,'passengers')
 figure(1)
-pass1 = 1:10;
+pass1 = 1:9;
 pass2 = 1:14;
 pass3 = 1:14;
 plot(pass1, energies(1:length(pass1), 1), ':k', 'LineWidth', 2);
@@ -959,7 +961,7 @@ leg.FontSize = 10;
 elseif strcmp(sweep,'hovers')
 figure(4)
 time1 = 10:10:1120;
-time2 = 10:10:3390;
+time2 = 10:10:3340;
 time3 = 10:20:6200;
 plot(time1, energies(1:length(time1), 1), ':r', 'LineWidth', 2)
 hold on
@@ -997,7 +999,6 @@ set(gca, 'linewidth', 2, 'FontSize', 12)
 leg = legend('144 Wh/kg', '250 Wh/kg', '400 Wh/kg', 'Location', 'NW');
 title(leg, 'Battery Energy Density')
 leg.FontSize = 10;
-
 
 end
 
